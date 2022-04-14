@@ -31,17 +31,29 @@ public class GridPoint3D : MonoBehaviour
 
     public void AdjustPositions()
     {
-        float x, y, s;
-        x = _previousX.transform.position.x;
-        y = _previousY.transform.position.z;
-        s = _previousS.transform.position.y;
+        float x = 0, y = 0, s = 0;
 
-        if (MainInstance.X > _previousX.MainInstance.X)
-            x += MainInstance.SpaceX;
-        if (MainInstance.Y > _previousY.MainInstance.Y)
-            y += MainInstance.SpaceY;
-        if (MainInstance.S > _previousS.MainInstance.S)
-            s += MainInstance.SpaceS;
+        if (_previousX != null)
+        {
+            x = _previousX.transform.position.x;
+            if (MainInstance.X > _previousX.MainInstance.X)
+                x += MainInstance.SpaceX;
+        }
+
+        if (_previousY != null)
+        {
+            y = _previousY.transform.position.z;
+            if (MainInstance.Y > _previousY.MainInstance.Y)
+                y += MainInstance.SpaceY;
+        }
+
+        if (_previousS != null)
+        {
+            s = _previousS.transform.position.y;
+            if (MainInstance.S > _previousS.MainInstance.S)
+                s += MainInstance.SpaceS;
+        }
+
 
         transform.position = new Vector3(x, s, y);
     }
