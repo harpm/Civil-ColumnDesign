@@ -26,7 +26,7 @@ public class GridBuilder : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        GenerateGrid(3, 3, 3, new float[] {10, 10, 10}, new float[] {10, 10, 10}, new float[] {8, 8, 8});
     }
 
     // Update is called once per frame
@@ -54,15 +54,29 @@ public class GridBuilder : MonoBehaviour
 
                     if (i > 0)
                         point.Instance3D.PreviousX = GridData[i - 1][j][k].Instance3D;
+
                     if (j > 0)
-                        point.Instance3D.PreviousY = GridData[i - 1][j - 1][k].Instance3D;
+                        point.Instance3D.PreviousY = GridData[i][j - 1][k].Instance3D;
+
                     if (k > 0)
                         point.Instance3D.PreviousS = GridData[i][j][k - 1].Instance3D;
+                    
 
                     point.Instance3D.AdjustPositions();
                 }
             }
         }
+    }
+
+
+
+
+    private void DrawGridLine(Vector3 pose1, Vector3 pose2)
+    {
+        var line = Instantiate(_gridLinePrefab, Parent3DGrid);
+        line.positionCount = 2;
+        line.SetPosition(0, pose1);
+        line.SetPosition(1, pose2);
     }
 
     #endregion
