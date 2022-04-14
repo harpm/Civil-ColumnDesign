@@ -28,26 +28,26 @@ public class GridPoint3D : MonoBehaviour
 
         if (PreviousX != null)
         {
-            x = PreviousX.transform.position.x;
+            x = PreviousX.transform.localPosition.x;
             if (MainInstance.X > PreviousX.MainInstance.X)
                 x += MainInstance.SpaceX;
         }
 
         if (PreviousY != null)
         {
-            y = PreviousY.transform.position.z;
+            y = PreviousY.transform.localPosition.z;
             if (MainInstance.Y > PreviousY.MainInstance.Y)
                 y += MainInstance.SpaceY;
         }
 
         if (PreviousS != null)
         {
-            s = PreviousS.transform.position.y;
+            s = PreviousS.transform.localPosition.y;
             if (MainInstance.S > PreviousS.MainInstance.S)
                 s += MainInstance.SpaceS;
         }
 
 
-        transform.position = new Vector3(x, s, y);
+        transform.localPosition = new Vector3(x, s, y);
     }
 }

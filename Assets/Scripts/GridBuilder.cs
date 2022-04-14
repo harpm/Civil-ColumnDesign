@@ -26,7 +26,7 @@ public class GridBuilder : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        GenerateGrid(3, 3, 3, new float[] {10, 10, 10}, new float[] {10, 10, 10}, new float[] {8, 8, 8});
+
     }
 
     // Update is called once per frame
@@ -60,20 +60,47 @@ public class GridBuilder : MonoBehaviour
 
                     if (k > 0)
                         point.Instance3D.PreviousS = GridData[i][j][k - 1].Instance3D;
-                    
+
 
                     point.Instance3D.AdjustPositions();
                 }
             }
         }
+
+        DrawGridLines();
     }
 
 
+    private void DrawGridLines()
+    {
+        for (int i = 0; i < GridData.Length; i++)
+        {
+            for (int j = 0; j < GridData[i].Length; j++)
+            {
+                for (int k = 0; k < GridData[i][j].Length; k++)
+                {
+                    var point = GridData[i][j][k];
+                    if (i > 0)
+                        DrawGridLine(GridData[i - 1][j][k].Instance3D.transform.localPosition,
+                            point.Instance3D.transform.localPosition);
 
+                    if (j > 0)
+                        DrawGridLine(GridData[i][j - 1][k].Instance3D.transform.localPosition,
+                            point.Instance3D.transform.localPosition);
+
+                    if (k > 0)
+                        DrawGridLine(GridData[i][j][k - 1].Instance3D.transform.localPosition,
+                            point.Instance3D.transform.localPosition);
+
+                }
+            }
+        }
+    }
 
     private void DrawGridLine(Vector3 pose1, Vector3 pose2)
     {
         var line = Instantiate(_gridLinePrefab, Parent3DGrid);
+        line.transform.localPosition = Vector3.zero;
         line.positionCount = 2;
         line.SetPosition(0, pose1);
         line.SetPosition(1, pose2);
