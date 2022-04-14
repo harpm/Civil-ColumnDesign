@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class GridBuilder : MonoBehaviour
@@ -26,7 +27,7 @@ public class GridBuilder : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        GenerateGrid(3, 3, 3, new float[] { 10, 10, 10 }, new float[] { 10, 10, 10 }, new float[] { 8, 8, 8 });
     }
 
     // Update is called once per frame
@@ -81,16 +82,16 @@ public class GridBuilder : MonoBehaviour
                 {
                     var point = GridData[i][j][k];
                     if (i > 0)
-                        DrawGridLine(GridData[i - 1][j][k].Instance3D.transform.localPosition,
-                            point.Instance3D.transform.localPosition);
+                        DrawGridLine(GridData[i - 1][j][k].Instance3D.transform.position,
+                            point.Instance3D.transform.position);
 
                     if (j > 0)
-                        DrawGridLine(GridData[i][j - 1][k].Instance3D.transform.localPosition,
-                            point.Instance3D.transform.localPosition);
+                        DrawGridLine(GridData[i][j - 1][k].Instance3D.transform.position,
+                            point.Instance3D.transform.position);
 
                     if (k > 0)
-                        DrawGridLine(GridData[i][j][k - 1].Instance3D.transform.localPosition,
-                            point.Instance3D.transform.localPosition);
+                        DrawGridLine(GridData[i][j][k - 1].Instance3D.transform.position,
+                            point.Instance3D.transform.position);
 
                 }
             }
@@ -100,10 +101,20 @@ public class GridBuilder : MonoBehaviour
     private void DrawGridLine(Vector3 pose1, Vector3 pose2)
     {
         var line = Instantiate(_gridLinePrefab, Parent3DGrid);
-        line.transform.localPosition = Vector3.zero;
+        line.transform.localPosition = pose1;
         line.positionCount = 2;
         line.SetPosition(0, pose1);
         line.SetPosition(1, pose2);
+    }
+
+    public Vector3 GetCenter3D()
+    {
+        return GridData.Last().Last().Last().Instance3D.transform.position / 2;
+    }
+
+    public Vector3 GetSize3D()
+    {
+        return GridData.Last().Last().Last().Instance3D.transform.position;
     }
 
     #endregion

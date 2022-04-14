@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CustomeStories : MonoBehaviour
+public class CustomXY : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()
