@@ -41,6 +41,11 @@ public class MainManager : MonoBehaviour
         }
     }
 
+    public void NewProject()
+    {
+        
+    }
+
     public Vector3 GetGridCenter3D()
     {
         return _gridBuilder.GetCenter3D();
