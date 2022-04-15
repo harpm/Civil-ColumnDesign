@@ -41,7 +41,7 @@ public class MouseManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        HandleMouseEvents(_3DRenderScreen, KeyCode.Mouse1, ref _rightClick, RotateByMouse);
+        HandleRotation(KeyCode.Mouse1);
         HandleZoom();
     }
 
@@ -55,23 +55,23 @@ public class MouseManager : MonoBehaviour
         }
     }
 
-    private void HandleMouseEvents(Transform screen, KeyCode kc, ref bool isMoving, UnityAction action)
+    private void HandleRotation( KeyCode kc)
     {
         var mPose = Input.mousePosition;
 
         if (Input.GetKeyDown(kc))
         {
-            if (TryHitRenderer(mPose, screen, out Vector3 localPose))
-                isMoving = true;
+            if (TryHitRenderer(mPose, _3DRenderScreen, out Vector3 localPose))
+                _rightClick = true;
         }
         else if (Input.GetKey(kc))
         {
-            if (isMoving)
-                action();
+            if (_rightClick)
+                RotateByMouse();
         }
         else if (Input.GetKeyUp(kc))
         {
-            isMoving = false;
+            _rightClick = false;
         }
         else
         {
