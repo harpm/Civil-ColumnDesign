@@ -31,6 +31,10 @@ public class CameraManager : MonoBehaviour
         distance /= 2.0f * Mathf.Tan(0.5f * _3DCamera.fieldOfView * Mathf.Deg2Rad);
 
         _3DCamera.transform.position = new Vector3(center.x + size.x, center.y + size.y, center.z - _3DCamera.transform.forward.normalized.z * distance * 2);
-        _3DCamera.transform.eulerAngles = new Vector3(30, -30, 0);
+        _3DCamera.transform.LookAt(center);
+
+        MainManager.Instance.MouseManager.CurrentRotation = _3DCamera.transform.localEulerAngles;
+        MainManager.Instance.MouseManager.RotateX = _3DCamera.transform.localEulerAngles.x;
+        MainManager.Instance.MouseManager.RotateY = _3DCamera.transform.localEulerAngles.y;
     }
 }

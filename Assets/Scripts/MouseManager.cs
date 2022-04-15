@@ -42,6 +42,17 @@ public class MouseManager : MonoBehaviour
     void Update()
     {
         HandleMouseEvents(_3DRenderScreen, KeyCode.Mouse1, ref _rightClick, RotateByMouse);
+        HandleZoom();
+    }
+
+    private void HandleZoom()
+    {
+        var mPose = Input.mousePosition;
+        if (TryHitRenderer(mPose, _3DRenderScreen, out Vector3 localPose))
+        {
+            var delta = Input.mouseScrollDelta.y;
+            _3DCamera.transform.position += delta * _3DCamera.transform.forward;
+        }
     }
 
     private void HandleMouseEvents(Transform screen, KeyCode kc, ref bool isMoving, UnityAction action)
@@ -62,12 +73,25 @@ public class MouseManager : MonoBehaviour
         {
             isMoving = false;
         }
+        else
+        {
+            RotateByMouse();
+        }
     }
 
     private void RotateByMouse()
     {
-        var axisX = Input.GetAxis("Mouse X");
-        var axisY = -Input.GetAxis("Mouse Y");
+        float axisX = 0;
+        float axisY = 0;
+
+        if (_rightClick)
+        {
+            axisX = Input.GetAxis("Mouse X");
+            axisY = -Input.GetAxis("Mouse Y");
+        }
+        else if (_rotVelocity == Vector3.zero)
+            return;
+        
 
         RotateX += axisY * _mouseSensitivity;
         RotateY += axisX * _mouseSensitivity;
