@@ -6204,6 +6204,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 402c4bcb87cb04d41bcce5e02a3b89d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _3DCamera: {fileID: 1618813751}
+  _2DCamera: {fileID: 1269463566}
 --- !u!4 &1204730954
 Transform:
   m_ObjectHideFlags: 0
@@ -10805,12 +10807,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3902044cb5e65a547bbcc4abff97db38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _mainWindow: {fileID: 0}
-  _createGridWindow: {fileID: 0}
+  _mainWindow: {fileID: 814718796}
+  _createGridWindow: {fileID: 1199597710}
   _customXY: {fileID: 0}
   _customStories: {fileID: 0}
-  _cameraManager: {fileID: 0}
-  GridBuilder: {fileID: 0}
+  CameraManager: {fileID: 1204730953}
+  GridBuilder: {fileID: 1134716596}
 --- !u!4 &2005165220
 Transform:
   m_ObjectHideFlags: 0

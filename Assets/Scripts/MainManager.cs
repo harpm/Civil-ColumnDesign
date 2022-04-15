@@ -19,15 +19,14 @@ public class MainManager : MonoBehaviour
 
     [Header("Core Scripts")]
     [SerializeField]
-    private CameraManager _cameraManager;
+    public CameraManager CameraManager;
 
     [SerializeField]
     public GridBuilder GridBuilder;
 
     public static MainManager Instance;
 
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         var mms = FindObjectsOfType<MainManager>();
         if (mms.Length > 1)
@@ -39,6 +38,12 @@ public class MainManager : MonoBehaviour
         {
             Instance = this;
         }
+    }
+
+    // Start is called before the first frame update
+    void Start()
+    {
+
     }
 
     // Update is called once per frame

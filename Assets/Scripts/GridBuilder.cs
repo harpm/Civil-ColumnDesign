@@ -69,6 +69,7 @@ public class GridBuilder : MonoBehaviour
         }
 
         DrawGridLines();
+        MainManager.Instance.CameraManager.TargetOnGrid3D();
     }
 
 
@@ -114,7 +115,7 @@ public class GridBuilder : MonoBehaviour
 
     public Vector3 GetSize3D()
     {
-        return GridData.Last().Last().Last().Instance3D.transform.position;
+        return GridData.Last().Last().Last().Instance3D.transform.localPosition;
     }
 
     #endregion
