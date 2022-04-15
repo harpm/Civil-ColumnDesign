@@ -24,6 +24,9 @@ public class MainManager : MonoBehaviour
     [SerializeField]
     public GridBuilder GridBuilder;
 
+    [SerializeField]
+    public MouseManager MouseManager;
+
     public static MainManager Instance;
 
     void Awake()
