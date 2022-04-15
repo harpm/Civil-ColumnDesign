@@ -110,7 +110,7 @@ public class GridBuilder : MonoBehaviour
 
     public Vector3 GetCenter3D()
     {
-        return GridData.Last().Last().Last().Instance3D.transform.position / 2;
+        return Parent3DGrid.TransformPoint(GridData.Last().Last().Last().Instance3D.transform.localPosition / 2);
     }
 
     public Vector3 GetSize3D()
