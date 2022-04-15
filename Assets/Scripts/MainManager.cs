@@ -22,7 +22,7 @@ public class MainManager : MonoBehaviour
     private CameraManager _cameraManager;
 
     [SerializeField]
-    private GridBuilder _gridBuilder;
+    public GridBuilder GridBuilder;
 
     public static MainManager Instance;
 
@@ -39,21 +39,6 @@ public class MainManager : MonoBehaviour
         {
             Instance = this;
         }
-    }
-
-    public void NewProject()
-    {
-        
-    }
-
-    public Vector3 GetGridCenter3D()
-    {
-        return _gridBuilder.GetCenter3D();
-    }
-
-    public Vector3 GetGridSize3D()
-    {
-        return _gridBuilder.GetSize3D();
     }
 
     // Update is called once per frame
