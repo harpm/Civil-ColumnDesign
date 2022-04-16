@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class MainWindow : MonoBehaviour
@@ -7,7 +6,13 @@ public class MainWindow : MonoBehaviour
     [SerializeField]
     private CreateGridWindow _createGridWindow;
 
-    // Start is called before the first frame update
+    [SerializeField]
+    private GameObject _errorWindow;
+
+    [SerializeField]
+    private TextMeshProUGUI _errorMessage;
+
+        // Start is called before the first frame update
     void Start()
     {
 
@@ -22,5 +27,16 @@ public class MainWindow : MonoBehaviour
     public void OpenCreatGridWindow()
     {
         _createGridWindow.gameObject.SetActive(true);
+    }
+
+    public void ShowError(string message)
+    {
+        _errorWindow.gameObject.SetActive(true);
+        _errorMessage.text = message;
+    }
+
+    public void DismissError()
+    {
+        _errorWindow.gameObject.SetActive(false);
     }
 }

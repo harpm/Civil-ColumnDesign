@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using Michsky.UI.ModernUIPack;
 using TMPro;
@@ -12,7 +11,7 @@ public class CreateGridWindow : MonoBehaviour
     private CustomXY _customXYWindow;
 
     [SerializeField]
-    private CustomStories  _customStoriesWindow;
+    private CustomStories _customStoriesWindow;
 
     [SerializeField]
     private TMP_InputField _xNoInput;
@@ -40,35 +39,29 @@ public class CreateGridWindow : MonoBehaviour
 
     [SerializeField]
     private Button _customXYBtn;
-    
+
     [SerializeField]
     private Button _customSBtn;
 
-    [SerializeField]
-    private GameObject _errorWindow;
 
-    [SerializeField]
-    private TextMeshProUGUI _errorText;
+    private int _xNo = 3;
+    private int _yNo = 3;
+    private int _sNo = 3;
 
-
-    private int _xNo;
-    private int _yNo;
-    private int _sNo;
-
-    private List<float> _xSpaces;
-    private List<float> _ySpaces;
-    private List<float> _sSpaces;
+    private List<float> _xSpaces = new List<float>() { 10.0f, 10.0f, 10.0f };
+    private List<float> _ySpaces = new List<float>() { 10.0f, 10.0f, 10.0f };
+    private List<float> _sSpaces = new List<float>() { 8.0f, 8.0f, 8.0f };
 
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public void CustomXYOn()
@@ -87,6 +80,14 @@ public class CreateGridWindow : MonoBehaviour
         _xSpaceInput.interactable = true;
         _ySpaceInput.interactable = true;
         _customXYBtn.interactable = false;
+    }
+
+    public void SetCustomXY(int x, int y, List<float> xSpaces, List<float> ySpaces)
+    {
+        _xNo = x;
+        _yNo = y;
+        _xSpaces = xSpaces;
+        _ySpaces = ySpaces;
 
     }
 
@@ -104,10 +105,22 @@ public class CreateGridWindow : MonoBehaviour
         _customSBtn.interactable = false;
     }
 
-    public void OnCustomXY()
+    public void SetCustomS(int s, List<float> sSpaces)
     {
-        _customXYWindow.enabled = true;
-        enabled = false;
+        _sNo = s;
+        _sSpaces = sSpaces;
+    }
+
+    public void BtnCustomXYClicked()
+    {
+        _customXYWindow.gameObject.SetActive(true);
+        gameObject.SetActive(false);
+    }
+
+    public void BtnCustomSClicked()
+    {
+        _customStoriesWindow.gameObject.SetActive(true);
+        gameObject.SetActive(false);
     }
 
     public void CreateGrids()
@@ -140,7 +153,7 @@ public class CreateGridWindow : MonoBehaviour
 
             _xNo = Int32.Parse(_xNoInput.text);
             _yNo = Int32.Parse(_yNoInput.text);
-            
+
             var defaultXSpace = float.Parse(_xSpaceInput.text);
             _xSpaces.ForEach(f => f = defaultXSpace);
 
@@ -174,32 +187,13 @@ public class CreateGridWindow : MonoBehaviour
         Close();
     }
 
-    private void ShowError(string message)
-    {
-        _errorWindow.SetActive(true);
-        _errorText.text = message;
-    }
-
-    public void DismissError()
-    {
-        _errorWindow.SetActive(false);
-    }
-
     public void Close()
     {
-        ResetValues();
         gameObject.SetActive(false);
     }
 
-    private void ResetValues()
+    private void ShowError(string message)
     {
-        _xNoInput.text = string.Empty;
-        _yNoInput.text = string.Empty;
-        _sNoInput.text = string.Empty;
-        _xSpaceInput.text = string.Empty;
-        _ySpaceInput.text = string.Empty;
-        _sSpaceInput.text = string.Empty;
-        _customXYSwitch.isOn = false;
-        _customStoriesSwitch.isOn = false;
+        MainManager.Instance.MainWindow.ShowError(message);
     }
 }

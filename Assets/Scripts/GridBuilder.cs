@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -40,6 +38,8 @@ public class GridBuilder : MonoBehaviour
 
     public void GenerateGrid(int x, int y, int s, float[] xSpaces, float[] ySpaces, float[] sSpaces)
     {
+        ClearGrid();
+
         GridData = new GridPoint[x][][];
         for (int i = 0; i < x; i++)
         {
@@ -125,4 +125,22 @@ public class GridBuilder : MonoBehaviour
 
 
     #endregion
+
+
+    private void ClearGrid()
+    {
+        int count = Parent3DGrid.childCount;
+        for (int i = 0; i < count; i++)
+        {
+            Destroy(Parent3DGrid.GetChild(i).gameObject);
+        }
+
+        count = Parent2DGrid.childCount;
+        for (int i = 0; i < count; i++)
+        {
+            Destroy(Parent2DGrid.GetChild(i).gameObject);
+        }
+
+        GridData = default;
+    }
 }

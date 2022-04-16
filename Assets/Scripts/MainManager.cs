@@ -1,15 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class MainManager : MonoBehaviour
 {
     [Header("UI")]
     [SerializeField]
-    private MainWindow _mainWindow;
+    public MainWindow MainWindow;
 
     [SerializeField]
-    private CreateGridWindow _createGridWindow;
+    public CreateGridWindow CreateGridWindow;
 
     [SerializeField]
     private CustomXY _customXY;
