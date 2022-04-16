@@ -23,7 +23,18 @@ public class GridPoint
         }
     }
 
-    public GridPoint2D Instance2D;
+    private GridPoint2D _instance2D;
+
+    public GridPoint2D Instance2D
+    {
+        get => _instance2D;
+
+        set
+        {
+            _instance2D = value;
+            value.MainInstance = this;
+        }
+    }
 
     public GridPoint(int x, int y, int s, float spaceX, float spaceY, float spaceS)
     {

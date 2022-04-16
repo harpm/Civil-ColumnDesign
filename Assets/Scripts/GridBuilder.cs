@@ -68,12 +68,13 @@ public class GridBuilder : MonoBehaviour
             }
         }
 
-        DrawGridLines();
+        DrawGridLines3D();
+        ShowSliceS(GridData[0][0].Length - 1);
         MainManager.Instance.CameraManager.TargetOnGrid3D();
     }
 
 
-    private void DrawGridLines()
+    private void DrawGridLines3D()
     {
         for (int i = 0; i < GridData.Length; i++)
         {
@@ -122,7 +123,104 @@ public class GridBuilder : MonoBehaviour
 
     #region 2D Grid
 
+    private void ShowSliceX(int x)
+    {
+        for (int i = 0; i < GridData[x].Length; i++)
+        {
+            for (int j = 0; j < GridData[x][i].Length; j++)
+            {
+                var point = GridData[x][i][j].Instance2D = Instantiate(_gridPointPrefab2D, Parent2DGrid);
 
+                point.X = i + 1;
+                point.Y = j + 1;
+                point.SpacingX = point.MainInstance.SpaceY;
+                point.SpacingY = point.MainInstance.SpaceS;
+
+                if (i > 0)
+                    point.PreviousX = GridData[x][i - 1][j].Instance2D;
+
+                if (j > 0)
+                    point.PreviousY = GridData[x][i][j - 1].Instance2D;
+
+                point.AdjustPosition();
+
+                if (i > 0)
+                    DrawSingleLine2D(point.PreviousX.transform.localPosition, point.transform.localPosition);
+
+                if (j > 0)
+                    DrawSingleLine2D(point.PreviousY.transform.localPosition, point.transform.localPosition);
+            }
+        }
+    }
+
+    private void ShowSliceY(int y)
+    {
+        for (int i = 0; i < GridData.Length; i++)
+        {
+            for (int j = 0; j < GridData[i][y].Length; j++)
+            {
+                var point = GridData[i][y][j].Instance2D = Instantiate(_gridPointPrefab2D, Parent2DGrid);
+
+                point.X = i + 1;
+                point.Y = j + 1;
+                point.SpacingX = point.MainInstance.SpaceX;
+                point.SpacingY = point.MainInstance.SpaceS;
+
+                if (i > 0)
+                    point.PreviousX = GridData[i - 1][y][j].Instance2D;
+
+                if (j > 0)
+                    point.PreviousY = GridData[i][y][j - 1].Instance2D;
+
+                point.AdjustPosition();
+
+                if (i > 0)
+                    DrawSingleLine2D(point.PreviousX.transform.localPosition, point.transform.localPosition);
+
+                if (j > 0)
+                    DrawSingleLine2D(point.PreviousY.transform.localPosition, point.transform.localPosition);
+            }
+        }
+    }
+
+    private void ShowSliceS(int s)
+    {
+        for (int i = 0; i < GridData.Length; i++)
+        {
+            for (int j = 0; j < GridData[i].Length; j++)
+            {
+                var point = GridData[i][j][s].Instance2D = Instantiate(_gridPointPrefab2D, Parent2DGrid);
+
+                point.X = i + 1;
+                point.Y = j + 1;
+                point.SpacingX = point.MainInstance.SpaceY;
+                point.SpacingY = point.MainInstance.SpaceS;
+
+                if (i > 0)
+                    point.PreviousX = GridData[i - 1][j][s].Instance2D;
+
+                if (j > 0)
+                    point.PreviousY = GridData[i][j - 1][s].Instance2D;
+
+                point.AdjustPosition();
+
+                if (i > 0)
+                    DrawSingleLine2D(point.PreviousX.transform.localPosition, point.transform.localPosition);
+
+                if (j > 0)
+                    DrawSingleLine2D(point.PreviousY.transform.localPosition, point.transform.localPosition);
+            }
+        }
+    }
+
+    private void DrawSingleLine2D(Vector3 pose1, Vector3 pose2)
+    {
+        var line = Instantiate(_gridLinePrefab, Parent2DGrid);
+        line.transform.localPosition = pose1;
+        line.positionCount = 2;
+        line.SetPosition(0, pose1);
+        line.SetPosition(1, pose2);
+    }
 
     #endregion
 
