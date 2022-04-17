@@ -4,10 +4,23 @@ using UnityEngine;
 
 public class GridPoint3D : MonoBehaviour
 {
+    [SerializeField]
+    private MeshRenderer _renderer;
+
+    [SerializeField]
+    private Material _mainMaterial;
+
+    [SerializeField]
+    private Material _hoveringMaterial;
+
+    [HideInInspector]
     public GridPoint MainInstance;
 
+    [HideInInspector]
     public GridPoint3D PreviousX;
+    [HideInInspector]
     public GridPoint3D PreviousY;
+    [HideInInspector]
     public GridPoint3D PreviousS;
 
     // Start is called before the first frame update
@@ -49,5 +62,15 @@ public class GridPoint3D : MonoBehaviour
 
 
         transform.localPosition = new Vector3(x, s, y);
+    }
+
+    public void Hover()
+    {
+        _renderer.material = _hoveringMaterial;
+    }
+
+    public void EndHover()
+    {
+        _renderer.material = _mainMaterial;
     }
 }

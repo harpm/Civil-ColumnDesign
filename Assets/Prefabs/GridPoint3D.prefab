@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 6617179471024859096}
   - component: {fileID: 6617179471024859044}
   m_Layer: 0
-  m_Name: GridPoint
+  m_Name: GridPoint3D
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -108,6 +108,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0bcdc64b028688b46bd9d4b692c01ced, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _renderer: {fileID: 6617179471024859097}
+  _mainMaterial: {fileID: 2100000, guid: 986e6abe01774b04bb04a0f5d24a3d1b, type: 2}
+  _hoveringMaterial: {fileID: 2100000, guid: 4fe14cd2f75a8204e9b9483a8090e70d, type: 2}
   PreviousX: {fileID: 0}
   PreviousY: {fileID: 0}
   PreviousS: {fileID: 0}
