@@ -10033,8 +10033,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _gridPointPrefab3D: {fileID: 6617179471024859044, guid: 36e284c815e0928448226e8adb35a48e, type: 3}
-  _gridPointPrefab2D: {fileID: 0}
+  _gridPointPrefab2D: {fileID: 5485912160294396965, guid: fef1bd8c091ce6145b7bdd914c577560, type: 3}
   _gridLinePrefab: {fileID: 5755153900078182346, guid: 016096261cdf617429fe349740b54098, type: 3}
+  _xyzAxis: {fileID: 0}
+  _labelFramePrefab: {fileID: 7929327553148016510, guid: 9c0ad1ca656727444acf2233b7abdba3, type: 3}
   Parent3DGrid: {fileID: 288630729}
   Parent2DGrid: {fileID: 1589303918}
 --- !u!1 &1139493799
@@ -14862,7 +14864,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1589303917}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -400, y: 0, z: 0}
+  m_LocalPosition: {x: -4000, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1134716595}
