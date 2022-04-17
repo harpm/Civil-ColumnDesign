@@ -19,6 +19,9 @@ public class GridBuilder : MonoBehaviour
     [SerializeField]
     private LabelFrame _labelFramePrefab;
 
+    [SerializeField]
+    private LabelFrame _spacingLabelPrefab;
+
     [Header("References")]
     [SerializeField]
     public Transform Parent3DGrid;
@@ -78,7 +81,7 @@ public class GridBuilder : MonoBehaviour
         DrawGridLines3D();
 
         ShowSliceS(GridData[0][0].Length - 1);
-        
+
         MainManager.Instance.CameraManager.TargetOnGrid3D();
         MainManager.Instance.CameraManager.TargetOnGrid2D();
     }
@@ -165,7 +168,10 @@ public class GridBuilder : MonoBehaviour
 
                     if (j > 0)
                     {
-
+                        var spacing = Instantiate(_spacingLabelPrefab, Parent2DGrid);
+                        spacing.transform.localPosition = new Vector3(point.transform.localPosition.x - 2,
+                            point.transform.localPosition.y - point.SpacingY / 2);
+                        spacing.text.text = point.SpacingY + " m";
                     }
                 }
 
@@ -174,6 +180,14 @@ public class GridBuilder : MonoBehaviour
                     var label = Instantiate(_labelFramePrefab, Parent2DGrid);
                     label.transform.localPosition = new Vector3(point.transform.localPosition.x, point.transform.localPosition.y + 3);
                     label.text.text = (i + 1).ToString();
+
+                    if (i > 0)
+                    {
+                        var spacing = Instantiate(_spacingLabelPrefab, Parent2DGrid);
+                        spacing.transform.localPosition = new Vector3(point.transform.localPosition.x - point.SpacingX / 2,
+                            point.transform.localPosition.y + 2);
+                        spacing.text.text = point.SpacingX + " m";
+                    }
                 }
 
             }
@@ -218,7 +232,10 @@ public class GridBuilder : MonoBehaviour
 
                     if (j > 0)
                     {
-
+                        var spacing = Instantiate(_spacingLabelPrefab, Parent2DGrid);
+                        spacing.transform.localPosition = new Vector3(point.transform.localPosition.x - 2,
+                            point.transform.localPosition.y - point.SpacingY / 2);
+                        spacing.text.text = point.SpacingY + " m";
                     }
                 }
 
@@ -227,6 +244,14 @@ public class GridBuilder : MonoBehaviour
                     var label = Instantiate(_labelFramePrefab, Parent2DGrid);
                     label.transform.localPosition = new Vector3(point.transform.localPosition.x, point.transform.localPosition.y + 3);
                     label.text.text = (i + 1).ToString();
+
+                    if (i > 0)
+                    {
+                        var spacing = Instantiate(_spacingLabelPrefab, Parent2DGrid);
+                        spacing.transform.localPosition = new Vector3(point.transform.localPosition.x - point.SpacingX / 2,
+                            point.transform.localPosition.y + 2);
+                        spacing.text.text = point.SpacingX + " m";
+                    }
                 }
             }
         }
@@ -272,7 +297,10 @@ public class GridBuilder : MonoBehaviour
 
                     if (j > 0)
                     {
-
+                        var spacing = Instantiate(_spacingLabelPrefab, Parent2DGrid);
+                        spacing.transform.localPosition = new Vector3(point.transform.localPosition.x - 2,
+                            point.transform.localPosition.y - point.SpacingY / 2);
+                        spacing.text.text = point.SpacingY + " m";
                     }
                 }
 
@@ -281,6 +309,14 @@ public class GridBuilder : MonoBehaviour
                     var label = Instantiate(_labelFramePrefab, Parent2DGrid);
                     label.transform.localPosition = new Vector3(point.transform.localPosition.x, point.transform.localPosition.y + 3);
                     label.text.text = (i + 1).ToString();
+
+                    if (i > 0)
+                    {
+                        var spacing = Instantiate(_spacingLabelPrefab, Parent2DGrid);
+                        spacing.transform.localPosition = new Vector3(point.transform.localPosition.x - point.SpacingX / 2,
+                            point.transform.localPosition.y + 2);
+                        spacing.text.text = point.SpacingX + " m";
+                    }
                 }
             }
         }
