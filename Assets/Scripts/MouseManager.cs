@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.Events;
+using UnityEngine.UI;
 
 public class MouseManager : MonoBehaviour
 {
@@ -18,10 +18,10 @@ public class MouseManager : MonoBehaviour
     private Camera _2DCamera;
 
     [SerializeField]
-    private Transform _3DRenderScreen;
+    private RawImage _3DRenderScreen;
 
     [SerializeField]
-    private Transform _2DRenderScreen;
+    private RawImage _2DRenderScreen;
 
     public Vector3 CurrentRotation;
 
@@ -31,6 +31,9 @@ public class MouseManager : MonoBehaviour
     private bool _rightClick;
 
     private Vector3 _rotVelocity = Vector3.zero;
+
+    private GridPoint3D _hoveringPoint3D;
+    private GridPoint2D _hoveringPoint2D;
 
     // Start is called before the first frame update
     void Start()
@@ -43,25 +46,70 @@ public class MouseManager : MonoBehaviour
     {
         HandleRotation(KeyCode.Mouse1);
         HandleZoom();
+        // HandleRaycast();
+    }
+
+    private void HandleRaycast()
+    {
+        var mPose = Input.mousePosition;
+        var ray = Camera.main.ScreenPointToRay(mPose);
+
+        if (TryHitRenderer(ray, _3DRenderScreen, out Vector3 localPose))
+        {
+            if (TryHitPoint3D(localPose, _3DCamera, out RaycastHit hit))
+            {
+                if (hit.collider.TryGetComponent(out _hoveringPoint3D))
+                {
+                    _hoveringPoint3D.Hover();
+                }
+                else if (_hoveringPoint3D != null)
+                        _hoveringPoint3D.EndHover();
+
+            }
+            else if (_hoveringPoint3D != null)
+                _hoveringPoint3D.EndHover();
+        }
+        else if (_hoveringPoint3D != null)
+            _hoveringPoint3D.EndHover();
+
+        if (TryHitRenderer(ray, _2DRenderScreen, out localPose))
+        {
+            if (TryHitPoint2D(localPose, _2DCamera, out RaycastHit2D hit))
+            {
+                if (hit.collider.TryGetComponent(out _hoveringPoint2D))
+                {
+                    _hoveringPoint2D.Hover();
+                }
+                else if (_hoveringPoint2D != null)
+                    _hoveringPoint2D.EndHover();
+            }
+            else if (_hoveringPoint3D != null)
+                _hoveringPoint3D.EndHover();
+
+        }
+        else if(_hoveringPoint3D != null)
+            _hoveringPoint3D.EndHover();
     }
 
     private void HandleZoom()
     {
         var mPose = Input.mousePosition;
-        if (TryHitRenderer(mPose, _3DRenderScreen, out Vector3 localPose))
+        var ray = Camera.main.ScreenPointToRay(mPose);
+        if (TryHitRenderer(ray, _3DRenderScreen, out Vector3 localPose))
         {
             var delta = Input.mouseScrollDelta.y;
             _3DCamera.transform.position += delta * _3DCamera.transform.forward;
         }
     }
 
-    private void HandleRotation( KeyCode kc)
+    private void HandleRotation(KeyCode kc)
     {
         var mPose = Input.mousePosition;
+        var ray = Camera.main.ScreenPointToRay(mPose);
 
         if (Input.GetKeyDown(kc))
         {
-            if (TryHitRenderer(mPose, _3DRenderScreen, out Vector3 localPose))
+            if (TryHitRenderer(ray, _3DRenderScreen, out Vector3 localPose))
                 _rightClick = true;
         }
         else if (Input.GetKey(kc))
@@ -107,18 +155,53 @@ public class MouseManager : MonoBehaviour
             center - (_3DCamera.transform.position - center).magnitude * _3DCamera.transform.forward;
     }
 
-    private bool TryHitRenderer(Vector3 pose, Transform renderer, out Vector3 localPose)
+    private bool TryHitRenderer(Ray ray, RawImage renderer, out Vector3 localPose)
     {
         bool res = false;
         localPose = -Vector3.one;
 
-        var ray = Camera.main.ScreenPointToRay(pose);
         var hit = Physics2D.Raycast(ray.origin, ray.direction);
-        if (hit.collider != null && hit.transform == renderer)
+        if (hit.collider != null && hit.collider.GetComponent<RawImage>() == renderer)
         {
+            print(hit.transform.name);
             res = true;
-            localPose = renderer.InverseTransformPoint(pose);
+            localPose = renderer.transform.InverseTransformPoint(hit.point);
+            localPose = new Vector3(localPose.x / renderer.mainTexture.width,
+                localPose.y / renderer.mainTexture.height);
         }
+
+        return res;
+    }
+
+    private bool TryHitPoint3D(Vector3 localPose, Camera camera, out RaycastHit hit)
+    {
+        localPose = new Vector3(localPose.x * camera.pixelWidth, localPose.y * camera.pixelHeight);
+
+        bool res = false;
+
+        hit = default;
+        var ray = camera.ScreenPointToRay(localPose);
+        if (Physics.Raycast(ray, out hit))
+        {
+            if (hit.collider != null)
+                res = true;
+        }
+
+
+        return res;
+    }
+
+    private bool TryHitPoint2D(Vector3 localPose, Camera camera, out RaycastHit2D hit)
+    {
+        localPose = new Vector3(localPose.x * camera.pixelWidth, localPose.y * camera.pixelHeight);
+
+        bool res = false;
+
+        var ray = camera.ScreenPointToRay(localPose);
+        hit = Physics2D.Raycast(ray.origin, ray.direction);
+        if (hit.collider != null)
+            res = true;
+
 
         return res;
     }

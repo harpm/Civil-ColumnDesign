@@ -1507,11 +1507,11 @@ RectTransform:
   m_Father: {fileID: 56058141}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 0.5}
-  m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -25}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -6, y: 10.5}
   m_SizeDelta: {x: 756, y: 945}
-  m_Pivot: {x: 1, y: 0.5}
+  m_Pivot: {x: 0, y: 0}
 --- !u!114 &128883683
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1560,7 +1560,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -380, y: 0}
+  m_Offset: {x: 378, y: 470}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -3607,8 +3607,6 @@ MonoBehaviour:
   _xListParent: {fileID: 909832782}
   _yListParent: {fileID: 479238660}
   _listItemPrefab: {fileID: 5138932210201138033, guid: ad4ef60f885eb9c4aad54858c6f9a448, type: 3}
-  _defaultSpaceX: 10
-  _defaultSpaceY: 10
 --- !u!114 &332939146
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6356,9 +6354,9 @@ MonoBehaviour:
   _mouseSensitivity: 2
   _smoothTime: 0.2
   _3DCamera: {fileID: 1618813751}
-  _2DCamera: {fileID: 0}
-  _3DRenderScreen: {fileID: 128883682}
-  _2DRenderScreen: {fileID: 0}
+  _2DCamera: {fileID: 1269463566}
+  _3DRenderScreen: {fileID: 128883683}
+  _2DRenderScreen: {fileID: 1096782570}
   CurrentRotation: {x: 0, y: 0, z: 0}
   RotateX: 0
   RotateY: 0
@@ -9652,6 +9650,7 @@ GameObject:
   - component: {fileID: 1096782569}
   - component: {fileID: 1096782571}
   - component: {fileID: 1096782570}
+  - component: {fileID: 1096782572}
   m_Layer: 5
   m_Name: Render Tex
   m_TagString: Untagged
@@ -9673,11 +9672,11 @@ RectTransform:
   m_Father: {fileID: 1006713149}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 0.5}
-  m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -25}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -6, y: 10.5}
   m_SizeDelta: {x: 756, y: 945}
-  m_Pivot: {x: 1, y: 0.5}
+  m_Pivot: {x: 0, y: 0}
 --- !u!114 &1096782570
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9713,6 +9712,32 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1096782568}
   m_CullTransparentMesh: 1
+--- !u!61 &1096782572
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1096782568}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 378, y: 470}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 754, y: 945}
+  m_EdgeRadius: 0
 --- !u!1 &1103470839
 GameObject:
   m_ObjectHideFlags: 0
