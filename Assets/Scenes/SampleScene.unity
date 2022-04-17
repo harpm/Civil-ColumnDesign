@@ -10035,8 +10035,9 @@ MonoBehaviour:
   _gridPointPrefab3D: {fileID: 6617179471024859044, guid: 36e284c815e0928448226e8adb35a48e, type: 3}
   _gridPointPrefab2D: {fileID: 5485912160294396965, guid: fef1bd8c091ce6145b7bdd914c577560, type: 3}
   _gridLinePrefab: {fileID: 5755153900078182346, guid: 016096261cdf617429fe349740b54098, type: 3}
-  _xyzAxis: {fileID: 0}
+  _xyzAxisPrefab: {fileID: 2983454031874388316, guid: aa047234608135e40b0beebca3a177e8, type: 3}
   _labelFramePrefab: {fileID: 7929327553148016510, guid: 9c0ad1ca656727444acf2233b7abdba3, type: 3}
+  _spacingLabelPrefab: {fileID: 2314263776091458877, guid: e0383018777174247861d36ebc0b277c, type: 3}
   Parent3DGrid: {fileID: 288630729}
   Parent2DGrid: {fileID: 1589303918}
 --- !u!1 &1139493799

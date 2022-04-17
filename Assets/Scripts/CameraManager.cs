@@ -26,7 +26,7 @@ public class CameraManager : MonoBehaviour
         float distance = Mathf.Max(size.x, size.y, size.z);
         distance /= 2.0f * Mathf.Tan(0.5f * _3DCamera.fieldOfView * Mathf.Deg2Rad);
 
-        _3DCamera.transform.position = new Vector3(center.x + size.x, center.y + size.y,
+        _3DCamera.transform.position = new Vector3(center.x - size.x, center.y + size.y,
             center.z - _3DCamera.transform.forward.normalized.z * distance * 2);
         _3DCamera.transform.LookAt(center);
 

@@ -14,7 +14,7 @@ public class GridBuilder : MonoBehaviour
     private LineRenderer _gridLinePrefab;
 
     [SerializeField]
-    private GameObject _xyzAxis;
+    private GameObject _xyzAxisPrefab;
 
     [SerializeField]
     private LabelFrame _labelFramePrefab;
@@ -79,6 +79,10 @@ public class GridBuilder : MonoBehaviour
         }
 
         DrawGridLines3D();
+
+        // Place Axis prefab
+        var pivot = Instantiate(_xyzAxisPrefab, Parent3DGrid);
+        pivot.transform.localPosition = GridData[0][0][0].Instance3D.transform.localPosition;
 
         ShowSliceS(GridData[0][0].Length - 1);
 
