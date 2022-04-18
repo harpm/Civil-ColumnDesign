@@ -154,6 +154,7 @@ public class MouseManager : MonoBehaviour
                 {
                     _drawingLine.Instance3D = Instantiate(_linePrefab, _3DLineParentTransform);
                     _drawingLine.Instance3D.Renderer.positionCount = 2;
+
                     _drawingLine.Instance3D.Renderer.SetPosition(0,
                         _drawingLine.FirstPoint.Instance3D.transform.position);
                     _drawingLine.Instance3D.Renderer.SetPosition(1,
@@ -167,7 +168,7 @@ public class MouseManager : MonoBehaviour
                     
                     _drawingLine.Instance2D.Renderer.SetPosition(0,
                         _drawingLine.FirstPoint.Instance2D.transform.position);
-                    _drawingLine.Instance3D.Renderer.SetPosition(1,
+                    _drawingLine.Instance2D.Renderer.SetPosition(1,
                         _drawingLine.FirstPoint.Instance3D.transform.position);
                     break;
                 }
