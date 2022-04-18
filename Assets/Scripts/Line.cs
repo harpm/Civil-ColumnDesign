@@ -38,20 +38,33 @@ public class Line
 
     public Axis _curAxis { get; private set; }
 
-    public float Length;
+    public float Length
+    {
+        get => (_firstPoint.Instance3D.transform.position - _endPoint.Instance3D.transform.position).magnitude;
+    }
 
     public void SetAxis()
     {
         if (FirstPoint != null && EndPoint != null)
         {
             if (EndPoint.X == FirstPoint.X && EndPoint.Y == FirstPoint.Y && EndPoint.S != FirstPoint.S)
+            {
                 _curAxis = Axis.Y;
+                if (_firstPoint.S > _endPoint.S)
+                {
+                    var temp = _firstPoint;
+                    _firstPoint = _endPoint;
+                    _endPoint = temp;
+                }
+            }
             else if (EndPoint.X == FirstPoint.X && EndPoint.Y != FirstPoint.Y && EndPoint.S == FirstPoint.S)
                 _curAxis = Axis.Z;
             else if (EndPoint.X != FirstPoint.X && EndPoint.Y == FirstPoint.Y && EndPoint.S == FirstPoint.S)
                 _curAxis = Axis.X;
         }
     }
+
+    // Utilities
 
     public static Axis GetAxis(GridPoint f, GridPoint e)
     {

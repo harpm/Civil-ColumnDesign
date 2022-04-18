@@ -13,12 +13,6 @@ public class CustomXY : MonoBehaviour
     [SerializeField]
     private CustomListItem _listItemPrefab;
 
-    [SerializeField]
-    private float _defaultSpaceX = 10;
-
-    [SerializeField]
-    private float _defaultSpaceY = 10;
-
     private List<CustomListItem> _xItems = new List<CustomListItem>();
     private List<CustomListItem> _yItems = new List<CustomListItem>();
 
