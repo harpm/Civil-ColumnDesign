@@ -24,10 +24,16 @@ public class GridBuilder : MonoBehaviour
 
     [Header("References")]
     [SerializeField]
-    public Transform Parent3DGrid;
+    public Transform Parent3DGridPoints;
 
     [SerializeField]
-    public Transform Parent2DGrid;
+    public Transform Parent3DGridLines;
+
+    [SerializeField]
+    public Transform Parent2DGridPoints;
+
+    [SerializeField]
+    public Transform Parent2DGridLines;
 
     private GridPoint[][][] GridData;
     private GridPoint2D[][] SliceData;
@@ -61,7 +67,7 @@ public class GridBuilder : MonoBehaviour
                 {
                     var point = GridData[i][j][k] =
                         new GridPoint(i + 1, j + 1, k + 1, xSpaces[i], ySpaces[j], sSpaces[k]);
-                    point.Instance3D = Instantiate(_gridPointPrefab3D, Parent3DGrid);
+                    point.Instance3D = Instantiate(_gridPointPrefab3D, Parent3DGridPoints);
 
                     if (i > 0)
                         point.Instance3D.PreviousX = GridData[i - 1][j][k].Instance3D;
@@ -81,7 +87,7 @@ public class GridBuilder : MonoBehaviour
         DrawGridLines3D();
 
         // Place Axis prefab
-        var pivot = Instantiate(_xyzAxisPrefab, Parent3DGrid);
+        var pivot = Instantiate(_xyzAxisPrefab, Parent3DGridPoints);
         pivot.transform.localPosition = GridData[0][0][0].Instance3D.transform.localPosition;
 
         ShowSliceS(GridData[0][0].Length - 1);
@@ -119,7 +125,7 @@ public class GridBuilder : MonoBehaviour
 
     private void DrawGridLine(Vector3 pose1, Vector3 pose2)
     {
-        var line = Instantiate(_gridLinePrefab, Parent3DGrid);
+        var line = Instantiate(_gridLinePrefab, Parent3DGridLines);
         line.transform.localPosition = pose1;
         line.positionCount = 2;
         line.SetPosition(0, pose1);
@@ -128,7 +134,7 @@ public class GridBuilder : MonoBehaviour
 
     public Vector3 GetCenter3D()
     {
-        return Parent3DGrid.TransformPoint(GridData.Last().Last().Last().Instance3D.transform.localPosition / 2);
+        return Parent3DGridPoints.TransformPoint(GridData.Last().Last().Last().Instance3D.transform.localPosition / 2);
     }
 
     public Vector3 GetSize3D()
@@ -148,7 +154,7 @@ public class GridBuilder : MonoBehaviour
             SliceData[i] = new GridPoint2D[GridData[x][i].Length];
             for (int j = 0; j < GridData[x][i].Length; j++)
             {
-                var point = SliceData[i][j] = GridData[x][i][j].Instance2D = Instantiate(_gridPointPrefab2D, Parent2DGrid);
+                var point = SliceData[i][j] = GridData[x][i][j].Instance2D = Instantiate(_gridPointPrefab2D, Parent2DGridPoints);
 
                 point.X = i + 1;
                 point.Y = j + 1;
@@ -166,13 +172,13 @@ public class GridBuilder : MonoBehaviour
                 // Draw Labels
                 if (i == 0)
                 {
-                    var label = Instantiate(_labelFramePrefab, Parent2DGrid);
+                    var label = Instantiate(_labelFramePrefab, Parent2DGridPoints);
                     label.transform.localPosition = new Vector3(point.transform.localPosition.x - 3, point.transform.localPosition.y);
                     label.text.text = (j + 1).ToString();
 
                     if (j > 0)
                     {
-                        var spacing = Instantiate(_spacingLabelPrefab, Parent2DGrid);
+                        var spacing = Instantiate(_spacingLabelPrefab, Parent2DGridPoints);
                         spacing.transform.localPosition = new Vector3(point.transform.localPosition.x - 2,
                             point.transform.localPosition.y - point.SpacingY / 2);
                         spacing.text.text = point.SpacingY + " m";
@@ -181,13 +187,13 @@ public class GridBuilder : MonoBehaviour
 
                 if (j == SliceData[i].Length - 1)
                 {
-                    var label = Instantiate(_labelFramePrefab, Parent2DGrid);
+                    var label = Instantiate(_labelFramePrefab, Parent2DGridPoints);
                     label.transform.localPosition = new Vector3(point.transform.localPosition.x, point.transform.localPosition.y + 3);
                     label.text.text = (i + 1).ToString();
 
                     if (i > 0)
                     {
-                        var spacing = Instantiate(_spacingLabelPrefab, Parent2DGrid);
+                        var spacing = Instantiate(_spacingLabelPrefab, Parent2DGridPoints);
                         spacing.transform.localPosition = new Vector3(point.transform.localPosition.x - point.SpacingX / 2,
                             point.transform.localPosition.y + 2);
                         spacing.text.text = point.SpacingX + " m";
@@ -206,7 +212,7 @@ public class GridBuilder : MonoBehaviour
             SliceData[i] = new GridPoint2D[GridData[i][y].Length];
             for (int j = 0; j < GridData[i][y].Length; j++)
             {
-                var point = SliceData[i][j] = GridData[i][y][j].Instance2D = Instantiate(_gridPointPrefab2D, Parent2DGrid);
+                var point = SliceData[i][j] = GridData[i][y][j].Instance2D = Instantiate(_gridPointPrefab2D, Parent2DGridPoints);
 
                 point.X = i + 1;
                 point.Y = j + 1;
@@ -230,13 +236,14 @@ public class GridBuilder : MonoBehaviour
                 // Draw Labels
                 if (i == 0)
                 {
-                    var label = Instantiate(_labelFramePrefab, Parent2DGrid);
-                    label.transform.localPosition = new Vector3(point.transform.localPosition.x - 3, point.transform.localPosition.y);
+                    var label = Instantiate(_labelFramePrefab, Parent2DGridPoints);
+                    label.transform.localPosition = new Vector3(point.transform.localPosition.x - 3,
+                        point.transform.localPosition.y);
                     label.text.text = (j + 1).ToString();
 
                     if (j > 0)
                     {
-                        var spacing = Instantiate(_spacingLabelPrefab, Parent2DGrid);
+                        var spacing = Instantiate(_spacingLabelPrefab, Parent2DGridPoints);
                         spacing.transform.localPosition = new Vector3(point.transform.localPosition.x - 2,
                             point.transform.localPosition.y - point.SpacingY / 2);
                         spacing.text.text = point.SpacingY + " m";
@@ -245,13 +252,13 @@ public class GridBuilder : MonoBehaviour
 
                 if (j == SliceData[i].Length - 1)
                 {
-                    var label = Instantiate(_labelFramePrefab, Parent2DGrid);
+                    var label = Instantiate(_labelFramePrefab, Parent2DGridPoints);
                     label.transform.localPosition = new Vector3(point.transform.localPosition.x, point.transform.localPosition.y + 3);
                     label.text.text = (i + 1).ToString();
 
                     if (i > 0)
                     {
-                        var spacing = Instantiate(_spacingLabelPrefab, Parent2DGrid);
+                        var spacing = Instantiate(_spacingLabelPrefab, Parent2DGridPoints);
                         spacing.transform.localPosition = new Vector3(point.transform.localPosition.x - point.SpacingX / 2,
                             point.transform.localPosition.y + 2);
                         spacing.text.text = point.SpacingX + " m";
@@ -269,7 +276,7 @@ public class GridBuilder : MonoBehaviour
             SliceData[i] = new GridPoint2D[GridData[i].Length];
             for (int j = 0; j < GridData[i].Length; j++)
             {
-                var point = SliceData[i][j] = GridData[i][j][s].Instance2D = Instantiate(_gridPointPrefab2D, Parent2DGrid);
+                var point = SliceData[i][j] = GridData[i][j][s].Instance2D = Instantiate(_gridPointPrefab2D, Parent2DGridPoints);
 
                 point.X = i + 1;
                 point.Y = j + 1;
@@ -295,13 +302,13 @@ public class GridBuilder : MonoBehaviour
                 // Draw Labels
                 if (i == 0)
                 {
-                    var label = Instantiate(_labelFramePrefab, Parent2DGrid);
+                    var label = Instantiate(_labelFramePrefab, Parent2DGridPoints);
                     label.transform.localPosition = new Vector3(point.transform.localPosition.x - 3, point.transform.localPosition.y);
                     label.text.text = (j + 1).ToString();
 
                     if (j > 0)
                     {
-                        var spacing = Instantiate(_spacingLabelPrefab, Parent2DGrid);
+                        var spacing = Instantiate(_spacingLabelPrefab, Parent2DGridPoints);
                         spacing.transform.localPosition = new Vector3(point.transform.localPosition.x - 2,
                             point.transform.localPosition.y - point.SpacingY / 2);
                         spacing.text.text = point.SpacingY + " m";
@@ -310,13 +317,13 @@ public class GridBuilder : MonoBehaviour
 
                 if (j == SliceData[i].Length - 1)
                 {
-                    var label = Instantiate(_labelFramePrefab, Parent2DGrid);
+                    var label = Instantiate(_labelFramePrefab, Parent2DGridPoints);
                     label.transform.localPosition = new Vector3(point.transform.localPosition.x, point.transform.localPosition.y + 3);
                     label.text.text = (i + 1).ToString();
 
                     if (i > 0)
                     {
-                        var spacing = Instantiate(_spacingLabelPrefab, Parent2DGrid);
+                        var spacing = Instantiate(_spacingLabelPrefab, Parent2DGridPoints);
                         spacing.transform.localPosition = new Vector3(point.transform.localPosition.x - point.SpacingX / 2,
                             point.transform.localPosition.y + 2);
                         spacing.text.text = point.SpacingX + " m";
@@ -328,7 +335,7 @@ public class GridBuilder : MonoBehaviour
 
     private void DrawSingleLine2D(Vector3 pose1, Vector3 pose2)
     {
-        var line = Instantiate(_gridLinePrefab, Parent2DGrid);
+        var line = Instantiate(_gridLinePrefab, Parent2DGridLines);
         line.transform.localPosition = pose1;
         line.positionCount = 2;
         line.SetPosition(0, pose1);
@@ -337,7 +344,7 @@ public class GridBuilder : MonoBehaviour
 
     public Vector3 GetCenter2D()
     {
-        return Parent2DGrid.TransformPoint(SliceData.Last().Last().transform.localPosition / 2);
+        return Parent2DGridPoints.TransformPoint(SliceData.Last().Last().transform.localPosition / 2);
     }
 
     public Vector3 GetSize2D()
@@ -350,18 +357,33 @@ public class GridBuilder : MonoBehaviour
 
     private void ClearGrid()
     {
-        int count = Parent3DGrid.childCount;
+        // 3D
+        int count = Parent3DGridPoints.childCount;
         for (int i = 0; i < count; i++)
         {
-            Destroy(Parent3DGrid.GetChild(i).gameObject);
+            Destroy(Parent3DGridPoints.GetChild(i).gameObject);
         }
 
-        count = Parent2DGrid.childCount;
+        count = Parent3DGridLines.childCount;
         for (int i = 0; i < count; i++)
         {
-            Destroy(Parent2DGrid.GetChild(i).gameObject);
+            Destroy(Parent3DGridLines.GetChild(i).gameObject);
+        }
+
+        // 2D
+        count = Parent2DGridPoints.childCount;
+        for (int i = 0; i < count; i++)
+        {
+            Destroy(Parent2DGridPoints.GetChild(i).gameObject);
+        }
+
+        count = Parent2DGridLines.childCount;
+        for (int i = 0; i < count; i++)
+        {
+            Destroy(Parent2DGridLines.GetChild(i).gameObject);
         }
 
         GridData = default;
+        SliceData = default;
     }
 }

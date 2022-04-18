@@ -1,13 +1,15 @@
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class MouseManager : MonoBehaviour
 {
+    [Header("Settings")]
     [SerializeField]
     [Range(0.5f, 5.0f)]
     private float _mouseSensitivity = 1.0f;
 
+    [Header("References")]
     [SerializeField]
     [Range(0.01f, 1.0f)]
     private float _smoothTime = 0.3f;
@@ -24,9 +26,26 @@ public class MouseManager : MonoBehaviour
     [SerializeField]
     private RawImage _2DRenderScreen;
 
+    [SerializeField]
+    private Transform _3DLineParentTransform;
+
+    [SerializeField]
+    private Transform _2DLineParentTransform;
+
+
+    [Header("Prefabs")]
+    [SerializeField]
+    private SteelLine _linePrefab;
+
+    [HideInInspector]
     public Vector3 CurrentRotation;
 
+    public Command CurrentCommand = Command.None;
+    private DrawMode _currentDrawMode = DrawMode.None;
+
+    [HideInInspector]
     public float RotateX;
+    [HideInInspector]
     public float RotateY;
 
     private bool _rightClick;
@@ -35,6 +54,11 @@ public class MouseManager : MonoBehaviour
 
     private GridPoint3D _hoveringPoint3D;
     private GridPoint2D _hoveringPoint2D;
+
+    private List<Line> _lines = new List<Line>();
+
+    private Line _drawingLine;
+
 
     // Start is called before the first frame update
     void Start()
@@ -48,19 +72,160 @@ public class MouseManager : MonoBehaviour
         HandleRotation(KeyCode.Mouse1);
         HandleZoom();
         HandleHover();
+        HandleCommand();
+    }
+
+    private void HandleCommand()
+    {
+        if (Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            switch (CurrentCommand)
+            {
+                case Command.None:
+                    {
+                        break;
+                    }
+                case Command.DrawLineFirstPoint:
+                    {
+                        if (_hoveringPoint3D != null)
+                        {
+                            _currentDrawMode = DrawMode.Frame3D;
+                            _drawingLine = new Line
+                            {
+                                FirstPoint = _hoveringPoint3D.MainInstance
+                            };
+                            StartDrawing();
+                            CurrentCommand = Command.DrawLineEndPoint;
+                        }
+                        else if (_hoveringPoint2D != null)
+                        {
+                            _currentDrawMode = DrawMode.Frame2D;
+                            _drawingLine = new Line
+                            {
+                                FirstPoint = _hoveringPoint2D.MainInstance
+                            };
+                            StartDrawing();
+                            CurrentCommand = Command.DrawLineEndPoint;
+                        }
+                        break;
+                    }
+                case Command.DrawLineEndPoint:
+                    {
+                        if (_drawingLine == null)
+                            break;
+
+                        if (_hoveringPoint3D != null)
+                        {
+                            _drawingLine.EndPoint = _hoveringPoint3D.MainInstance;
+                            if (_drawingLine.Valid)
+                            {
+                                EndDrawing();
+                                CurrentCommand = Command.None;
+                                _currentDrawMode = DrawMode.None;
+                                _lines.Add(_drawingLine);
+                            }
+                        }
+                        else if (_hoveringPoint2D != null)
+                        {
+                            _drawingLine.EndPoint = _hoveringPoint2D.MainInstance;
+                            if (_drawingLine.Valid)
+                            {
+                                EndDrawing();
+                                CurrentCommand = Command.None;
+                                _currentDrawMode = DrawMode.None;
+                                _lines.Add(_drawingLine);
+                            }
+                        }
+
+                        break;
+                    }
+            }
+        }
+    }
+
+    private void StartDrawing()
+    {
+        if (_drawingLine.FirstPoint == null)
+            return;
+
+        switch (_currentDrawMode)
+        {
+            case DrawMode.Frame3D:
+                {
+                    _drawingLine.Instance3D = Instantiate(_linePrefab, _3DLineParentTransform);
+                    _drawingLine.Instance3D.Renderer.positionCount = 2;
+                    _drawingLine.Instance3D.Renderer.SetPosition(0,
+                        _drawingLine.FirstPoint.Instance3D.transform.position);
+                    _drawingLine.Instance3D.Renderer.SetPosition(1,
+                        _drawingLine.FirstPoint.Instance3D.transform.position);
+                    break;
+                }
+            case DrawMode.Frame2D:
+                {
+                    _drawingLine.Instance2D = Instantiate(_linePrefab, _2DLineParentTransform);
+                    _drawingLine.Instance2D.Renderer.positionCount = 2;
+                    
+                    _drawingLine.Instance2D.Renderer.SetPosition(0,
+                        _drawingLine.FirstPoint.Instance2D.transform.position);
+                    _drawingLine.Instance3D.Renderer.SetPosition(1,
+                        _drawingLine.FirstPoint.Instance3D.transform.position);
+                    break;
+                }
+        }
+    }
+
+    private void PreviewDrawing()
+    {
+        switch (_currentDrawMode)
+        {
+            case DrawMode.Frame3D:
+            {
+                _drawingLine.Instance3D.Renderer.SetPosition(1,
+                    _hoveringPoint3D.transform.position);
+                break;
+            }
+            case DrawMode.Frame2D:
+            {
+                _drawingLine.Instance2D.Renderer.SetPosition(1,
+                    _hoveringPoint2D.transform.position);
+                break;
+            }
+        }
+    }
+
+    private void EndDrawing()
+    {
+        if (_drawingLine.EndPoint == null)
+            return;
+
+        switch (_currentDrawMode)
+        {
+            case DrawMode.Frame3D:
+                {
+                    _drawingLine.Instance3D.Renderer.SetPosition(1,
+                        _drawingLine.EndPoint.Instance3D.transform.position);
+                    break;
+                }
+            case DrawMode.Frame2D:
+                {
+                    _drawingLine.Instance2D.Renderer.SetPosition(1,
+                        _drawingLine.EndPoint.Instance2D.transform.position);
+                    break;
+                }
+        }
     }
 
     private void HandleHover()
     {
         var mPose = Input.mousePosition;
-        print("M Pose: " + mPose);
         if (TryHitRenderer(mPose, _3DRenderScreen, out Vector2 localPose))
         {
-            print("Local Pose: " + localPose);
             if (TryHitPoint(localPose, _3DCamera, out GridPoint3D point))
             {
                 _hoveringPoint3D = point;
                 _hoveringPoint3D.Hover();
+                if (CurrentCommand == Command.DrawLineEndPoint && _currentDrawMode == DrawMode.Frame3D)
+                    PreviewDrawing();
             }
             else
             {
@@ -73,11 +238,12 @@ public class MouseManager : MonoBehaviour
         }
         else if (TryHitRenderer(mPose, _2DRenderScreen, out Vector2 localPose2D))
         {
-            print("Local pose2D: " + localPose2D);
             if (TryHitPoint(localPose2D, _2DCamera, out GridPoint2D point))
             {
                 _hoveringPoint2D = point;
                 _hoveringPoint2D.Hover();
+                if (CurrentCommand == Command.DrawLineEndPoint && _currentDrawMode == DrawMode.Frame2D)
+                    PreviewDrawing();
             }
             else
             {
@@ -222,8 +388,46 @@ public class MouseManager : MonoBehaviour
 
     public enum Command
     {
-        DrawLine,
-        PutLine,
-        PutLineAll
+        None = 0,
+        DrawLineFirstPoint = 1,
+        DrawLineEndPoint = 2,
+        PutLine = 3,
+        PutLineAll = 2
+    }
+
+    public enum DrawMode
+    {
+        None,
+        Frame3D,
+        Frame2D
+    }
+
+    public void CancelInProgressCmd()
+    {
+        switch (CurrentCommand)
+        {
+            case Command.DrawLineFirstPoint:
+                {
+                    break;
+                }
+
+            case Command.DrawLineEndPoint:
+                {
+                    if (_currentDrawMode == DrawMode.Frame3D)
+                    {
+                        Destroy(_drawingLine.Instance3D.gameObject);
+                    }
+                    else if (_currentDrawMode == DrawMode.Frame2D)
+                    {
+                        Destroy(_drawingLine.Instance2D.gameObject);
+                    }
+
+                    _drawingLine = null;
+                    CurrentCommand = Command.None;
+                    _currentDrawMode = DrawMode.None;
+
+                    break;
+                }
+        }
     }
 }
