@@ -53,8 +53,10 @@ public class MouseManager : MonoBehaviour
     private void HandleHover()
     {
         var mPose = Input.mousePosition;
+        print("M Pose: " + mPose);
         if (TryHitRenderer(mPose, _3DRenderScreen, out Vector2 localPose))
         {
+            print("Local Pose: " + localPose);
             if (TryHitPoint(localPose, _3DCamera, out GridPoint3D point))
             {
                 _hoveringPoint3D = point;
@@ -71,6 +73,7 @@ public class MouseManager : MonoBehaviour
         }
         else if (TryHitRenderer(mPose, _2DRenderScreen, out Vector2 localPose2D))
         {
+            print("Local pose2D: " + localPose2D);
             if (TryHitPoint(localPose2D, _2DCamera, out GridPoint2D point))
             {
                 _hoveringPoint2D = point;
@@ -169,14 +172,16 @@ public class MouseManager : MonoBehaviour
         localPose = -Vector3.one;
 
         var ray = Camera.main.ScreenPointToRay(pose);
-        var hit = Physics2D.Raycast(ray.origin, ray.direction);
-        if (hit.collider != null && hit.transform == renderer.transform)
+        if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            res = true;
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(renderer.rectTransform, pose, Camera.main,
-                out localPose);
+            if (hit.collider != null && hit.transform == renderer.transform)
+            {
+                res = true;
+                RectTransformUtility.ScreenPointToLocalPointInRectangle(renderer.rectTransform, pose, Camera.main,
+                    out localPose);
 
-            localPose = new Vector2(localPose.x / renderer.texture.width, localPose.y / renderer.texture.height);
+                localPose = new Vector2(localPose.x / renderer.texture.width, localPose.y / renderer.texture.height);
+            }
         }
 
         return res;
@@ -206,13 +211,19 @@ public class MouseManager : MonoBehaviour
 
         localPose = new Vector3(localPose.x * camera.pixelWidth, localPose.y * camera.pixelHeight);
         var ray = camera.ScreenPointToRay(localPose);
-        RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction);
-
-        if (hit.collider != null && hit.collider.TryGetComponent(out point))
-            res = true;
+        if (Physics.Raycast(ray, out RaycastHit hit))
+            if (hit.collider != null && hit.collider.TryGetComponent(out point))
+                res = true;
 
 
 
         return res;
+    }
+
+    public enum Command
+    {
+        DrawLine,
+        PutLine,
+        PutLineAll
     }
 }
