@@ -165,11 +165,11 @@ public class MouseManager : MonoBehaviour
                 {
                     _drawingLine.Instance2D = Instantiate(_linePrefab, _2DLineParentTransform);
                     _drawingLine.Instance2D.Renderer.positionCount = 2;
-                    
+
                     _drawingLine.Instance2D.Renderer.SetPosition(0,
                         _drawingLine.FirstPoint.Instance2D.transform.position);
                     _drawingLine.Instance2D.Renderer.SetPosition(1,
-                        _drawingLine.FirstPoint.Instance3D.transform.position);
+                        _drawingLine.FirstPoint.Instance2D.transform.position);
                     break;
                 }
         }
@@ -180,17 +180,17 @@ public class MouseManager : MonoBehaviour
         switch (_currentDrawMode)
         {
             case DrawMode.Frame3D:
-            {
-                _drawingLine.Instance3D.Renderer.SetPosition(1,
-                    _hoveringPoint3D.transform.position);
-                break;
-            }
+                {
+                    _drawingLine.Instance3D.Renderer.SetPosition(1,
+                        _hoveringPoint3D.transform.position);
+                    break;
+                }
             case DrawMode.Frame2D:
-            {
-                _drawingLine.Instance2D.Renderer.SetPosition(1,
-                    _hoveringPoint2D.transform.position);
-                break;
-            }
+                {
+                    _drawingLine.Instance2D.Renderer.SetPosition(1,
+                        _hoveringPoint2D.transform.position);
+                    break;
+                }
         }
     }
 
@@ -205,15 +205,44 @@ public class MouseManager : MonoBehaviour
                 {
                     _drawingLine.Instance3D.Renderer.SetPosition(1,
                         _drawingLine.EndPoint.Instance3D.transform.position);
+
+                    Sync2DInstance();
                     break;
                 }
             case DrawMode.Frame2D:
                 {
                     _drawingLine.Instance2D.Renderer.SetPosition(1,
                         _drawingLine.EndPoint.Instance2D.transform.position);
+                    Sync3DInstance();
                     break;
                 }
         }
+    }
+
+    private void Sync3DInstance()
+    {
+        _drawingLine.Instance3D = Instantiate(_linePrefab, _3DLineParentTransform);
+        _drawingLine.Instance3D.Renderer.positionCount = 2;
+
+        _drawingLine.Instance3D.Renderer.SetPosition(0,
+            _drawingLine.FirstPoint.Instance3D.transform.position);
+        _drawingLine.Instance3D.Renderer.SetPosition(1,
+            _drawingLine.EndPoint.Instance3D.transform.position);
+    }
+
+    private void Sync2DInstance()
+    {
+        if (_drawingLine.FirstPoint.Instance2D == null
+            || _drawingLine.EndPoint.Instance2D == null)
+            return;
+        _drawingLine.Instance2D = Instantiate(_linePrefab, _2DLineParentTransform);
+        _drawingLine.Instance2D.Renderer.positionCount = 2;
+
+        _drawingLine.Instance2D.Renderer.SetPosition(0,
+            _drawingLine.FirstPoint.Instance2D.transform.position);
+        _drawingLine.Instance2D.Renderer.SetPosition(1,
+            _drawingLine.EndPoint.Instance2D.transform.position);
+
     }
 
     private void HandleHover()
