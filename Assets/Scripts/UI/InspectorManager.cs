@@ -4,6 +4,8 @@ using UnityEngine;
 public class InspectorManager : MonoBehaviour
 {
     [Header("References")]
+    [SerializeField]
+    public GameObject Content;
 
     [SerializeField]
     private TextMeshProUGUI _title;

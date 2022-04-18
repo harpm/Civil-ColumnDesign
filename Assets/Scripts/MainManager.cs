@@ -10,6 +10,9 @@ public class MainManager : MonoBehaviour
     public CreateGridWindow CreateGridWindow;
 
     [SerializeField]
+    public InspectorManager InspectorWindow;
+
+    [SerializeField]
     private CustomXY _customXY;
 
     [SerializeField]
