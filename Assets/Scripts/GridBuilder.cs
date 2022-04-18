@@ -1,4 +1,5 @@
 using System.Linq;
+using TMPro;
 using UnityEngine;
 
 public class GridBuilder : MonoBehaviour
@@ -34,6 +35,9 @@ public class GridBuilder : MonoBehaviour
 
     [SerializeField]
     public Transform Parent2DGridLines;
+
+    [SerializeField]
+    private TextMeshProUGUI _sliceTitle;
 
     private GridPoint[][][] GridData;
     private GridPoint2D[][] SliceData;
@@ -148,6 +152,7 @@ public class GridBuilder : MonoBehaviour
 
     private void ShowSliceX(int x)
     {
+        _sliceTitle.text = "X - " + (x + 1);
         SliceData = new GridPoint2D[GridData[x].Length][];
         for (int i = 0; i < GridData[x].Length; i++)
         {
@@ -174,7 +179,7 @@ public class GridBuilder : MonoBehaviour
                 {
                     var label = Instantiate(_labelFramePrefab, Parent2DGridPoints);
                     label.transform.localPosition = new Vector3(point.transform.localPosition.x - 3, point.transform.localPosition.y);
-                    label.text.text = (j + 1).ToString();
+                    label.text.text = "S" + (j + 1);
 
                     if (j > 0)
                     {
@@ -189,7 +194,7 @@ public class GridBuilder : MonoBehaviour
                 {
                     var label = Instantiate(_labelFramePrefab, Parent2DGridPoints);
                     label.transform.localPosition = new Vector3(point.transform.localPosition.x, point.transform.localPosition.y + 3);
-                    label.text.text = (i + 1).ToString();
+                    label.text.text = "Y" + (i + 1);
 
                     if (i > 0)
                     {
@@ -206,6 +211,8 @@ public class GridBuilder : MonoBehaviour
 
     private void ShowSliceY(int y)
     {
+        _sliceTitle.text = "Y - " + (y + 1);
+
         SliceData = new GridPoint2D[GridData.Length][];
         for (int i = 0; i < GridData.Length; i++)
         {
@@ -239,7 +246,7 @@ public class GridBuilder : MonoBehaviour
                     var label = Instantiate(_labelFramePrefab, Parent2DGridPoints);
                     label.transform.localPosition = new Vector3(point.transform.localPosition.x - 3,
                         point.transform.localPosition.y);
-                    label.text.text = (j + 1).ToString();
+                    label.text.text = "S" + (j + 1);
 
                     if (j > 0)
                     {
@@ -254,7 +261,7 @@ public class GridBuilder : MonoBehaviour
                 {
                     var label = Instantiate(_labelFramePrefab, Parent2DGridPoints);
                     label.transform.localPosition = new Vector3(point.transform.localPosition.x, point.transform.localPosition.y + 3);
-                    label.text.text = (i + 1).ToString();
+                    label.text.text = "X" + (i + 1);
 
                     if (i > 0)
                     {
@@ -270,6 +277,8 @@ public class GridBuilder : MonoBehaviour
 
     private void ShowSliceS(int s)
     {
+        _sliceTitle.text = "Story - " + (s + 1);
+
         SliceData = new GridPoint2D[GridData.Length][];
         for (int i = 0; i < GridData.Length; i++)
         {
@@ -304,7 +313,7 @@ public class GridBuilder : MonoBehaviour
                 {
                     var label = Instantiate(_labelFramePrefab, Parent2DGridPoints);
                     label.transform.localPosition = new Vector3(point.transform.localPosition.x - 3, point.transform.localPosition.y);
-                    label.text.text = (j + 1).ToString();
+                    label.text.text = "Y" + (j + 1);
 
                     if (j > 0)
                     {
@@ -319,7 +328,7 @@ public class GridBuilder : MonoBehaviour
                 {
                     var label = Instantiate(_labelFramePrefab, Parent2DGridPoints);
                     label.transform.localPosition = new Vector3(point.transform.localPosition.x, point.transform.localPosition.y + 3);
-                    label.text.text = (i + 1).ToString();
+                    label.text.text = "X" + (i + 1);
 
                     if (i > 0)
                     {
