@@ -124,7 +124,7 @@ public class MouseManager : MonoBehaviour
                                 l.FirstPoint == _drawingLine.FirstPoint &&
                                 l._curAxis == Line.GetAxis(_drawingLine.FirstPoint, _hoveringPoint3D.MainInstance)))
                             {
-                                Debug.Log("Cannot draw on another line");
+                                MainManager.Instance.MainWindow.StatusMessage("Cannot draw on another line", MainWindow.MessageType.Error);
                                 break;
                             }
 
@@ -144,7 +144,7 @@ public class MouseManager : MonoBehaviour
                                 l.FirstPoint == _drawingLine.FirstPoint &&
                                 l._curAxis == Line.GetAxis(_drawingLine.FirstPoint, _hoveringPoint2D.MainInstance)))
                             {
-                                Debug.Log("Cannot draw on another line");
+                                MainManager.Instance.MainWindow.StatusMessage("Cannot draw on another line", MainWindow.MessageType.Error);
                                 break;
                             }
 
@@ -158,7 +158,7 @@ public class MouseManager : MonoBehaviour
                                 _drawingLine.SetAxis();
                             }
                             else
-                                Debug.Log("Invalid Line");
+                                MainManager.Instance.MainWindow.StatusMessage("Invalid Line", MainWindow.MessageType.Error);
                         }
 
                         break;

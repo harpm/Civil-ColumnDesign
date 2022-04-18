@@ -12,6 +12,9 @@ public class MainWindow : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI _errorMessage;
 
+    [SerializeField]
+    private TextMeshProUGUI _statusText;
+
         // Start is called before the first frame update
     void Start()
     {
@@ -39,4 +42,37 @@ public class MainWindow : MonoBehaviour
     {
         _errorWindow.gameObject.SetActive(false);
     }
+
+    public void StatusMessage(string message, MessageType type)
+    {
+        _statusText.text = message;
+        switch (type)
+        {
+            case MessageType.Info:
+                _statusText.color = Color.blue;
+                break;
+
+            case MessageType.Successful:
+                _statusText.color = Color.green;
+                break;
+
+            case MessageType.Error:
+                _statusText.color = Color.red;
+                break;
+
+            case MessageType.Data:
+                _statusText.color = Color.black;
+                break;
+
+        }
+    }
+
+    public enum MessageType
+    {
+        Info,
+        Successful,
+        Error,
+        Data
+    }
+    
 }

@@ -99,6 +99,8 @@ public class GridBuilder : MonoBehaviour
 
         MainManager.Instance.CameraManager.TargetOnGrid3D();
         MainManager.Instance.CameraManager.TargetOnGrid2D();
+
+        MainManager.Instance.MainWindow.StatusMessage("Grid Built successfully!", MainWindow.MessageType.Successful);
     }
 
 
@@ -395,5 +397,7 @@ public class GridBuilder : MonoBehaviour
 
         GridData = default;
         SliceData = default;
+
+        MainManager.Instance.MainWindow.StatusMessage("Cleared Grid!" , MainWindow.MessageType.Info);
     }
 }
