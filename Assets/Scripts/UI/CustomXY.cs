@@ -106,7 +106,7 @@ public class CustomXY : MonoBehaviour
             }
         }
 
-        MainManager.Instance.CreateGridWindow.SetCustomXY(x, y, xSpaces.ToList(), ySpaces.ToList());
+        MainManager.Instance.CreateGridWindow.SetCustomXY(x, y, xSpaces, ySpaces);
         BtnCloseClick();
     }
 

@@ -48,9 +48,9 @@ public class CreateGridWindow : MonoBehaviour
     private int _yNo = 3;
     private int _sNo = 3;
 
-    private List<float> _xSpaces = new List<float>() { 10.0f, 10.0f, 10.0f };
-    private List<float> _ySpaces = new List<float>() { 10.0f, 10.0f, 10.0f };
-    private List<float> _sSpaces = new List<float>() { 8.0f, 8.0f, 8.0f };
+    private float[] _xSpaces = new float[] { 10.0f, 10.0f, 10.0f };
+    private float[] _ySpaces = new float[] { 10.0f, 10.0f, 10.0f };
+    private float[] _sSpaces = new float[] { 8.0f, 8.0f, 8.0f };
 
     // Start is called before the first frame update
     void Start()
@@ -82,7 +82,7 @@ public class CreateGridWindow : MonoBehaviour
         _customXYBtn.interactable = false;
     }
 
-    public void SetCustomXY(int x, int y, List<float> xSpaces, List<float> ySpaces)
+    public void SetCustomXY(int x, int y, float[] xSpaces, float[] ySpaces)
     {
         _xNo = x;
         _yNo = y;
@@ -105,7 +105,7 @@ public class CreateGridWindow : MonoBehaviour
         _customSBtn.interactable = false;
     }
 
-    public void SetCustomS(int s, List<float> sSpaces)
+    public void SetCustomS(int s, float[] sSpaces)
     {
         _sNo = s;
         _sSpaces = sSpaces;
@@ -155,10 +155,18 @@ public class CreateGridWindow : MonoBehaviour
             _yNo = Int32.Parse(_yNoInput.text);
 
             var defaultXSpace = float.Parse(_xSpaceInput.text);
-            _xSpaces.ForEach(f => f = defaultXSpace);
+            _xSpaces = new float[_xNo];
+            for (int i = 0; i < _xNo; i++)
+            {
+                _xSpaces[i] = defaultXSpace;
+            }
 
             var defaultYSpace = float.Parse(_ySpaceInput.text);
-            _ySpaces.ForEach(f => f = defaultYSpace);
+            _ySpaces = new float[_yNo];
+            for (int i = 0; i < _yNo; i++)
+            {
+                _ySpaces[i] = defaultYSpace;
+            }
         }
 
         if (!_customStoriesSwitch.isOn)
@@ -179,11 +187,15 @@ public class CreateGridWindow : MonoBehaviour
             _sNo = Int32.Parse(_sNoInput.text);
 
             var defaultSSpace = float.Parse(_sSpaceInput.text);
-            _sSpaces.ForEach(f => f = defaultSSpace);
+            _sSpaces = new float[_sNo];
+            for (int i = 0; i < _sNo; i++)
+            {
+                _sSpaces[i] = defaultSSpace;
+            }
         }
 
 
-        MainManager.Instance.GridBuilder.GenerateGrid(_xNo, _yNo, _sNo, _xSpaces.ToArray(), _ySpaces.ToArray(), _sSpaces.ToArray());
+        MainManager.Instance.GridBuilder.GenerateGrid(_xNo, _yNo, _sNo, _xSpaces, _ySpaces, _sSpaces);
         Close();
     }
 

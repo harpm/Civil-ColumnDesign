@@ -56,7 +56,7 @@ public class CustomStories : MonoBehaviour
             }
         }
 
-        MainManager.Instance.CreateGridWindow.SetCustomS(s, sSpaces.ToList());
+        MainManager.Instance.CreateGridWindow.SetCustomS(s, sSpaces);
         BtnCloseClick();
     }
 
