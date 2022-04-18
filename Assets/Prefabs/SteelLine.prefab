@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5198267520025814642}
   - component: {fileID: 5198267520025814641}
   - component: {fileID: 3624449812440762641}
+  - component: {fileID: 2947054463387005884}
   m_Layer: 0
   m_Name: SteelLine
   m_TagString: Untagged
@@ -143,3 +144,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Renderer: {fileID: 5198267520025814641}
+--- !u!136 &2947054463387005884
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5198267520025814640}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.1
+  m_Height: 1.25
+  m_Direction: 2
+  m_Center: {x: 0, y: 0, z: 0.5}

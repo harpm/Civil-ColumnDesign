@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -69,6 +70,9 @@ public class MouseManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Escape))
+            CancelInProgressCmd();
+
         HandleRotation(KeyCode.Mouse1);
         HandleZoom();
         HandleHover();
@@ -114,8 +118,16 @@ public class MouseManager : MonoBehaviour
                         if (_drawingLine == null)
                             break;
 
-                        if (_hoveringPoint3D != null)
+                        if (_currentDrawMode == DrawMode.Frame3D && _hoveringPoint3D != null)
                         {
+                            if (_lines.Any(l =>
+                                l.FirstPoint == _drawingLine.FirstPoint &&
+                                l._curAxis == Line.GetAxis(_drawingLine.FirstPoint, _hoveringPoint3D.MainInstance)))
+                            {
+                                Debug.Log("Cannot draw on another line");
+                                break;
+                            }
+
                             _drawingLine.EndPoint = _hoveringPoint3D.MainInstance;
                             if (_drawingLine.Valid)
                             {
@@ -123,10 +135,19 @@ public class MouseManager : MonoBehaviour
                                 CurrentCommand = Command.None;
                                 _currentDrawMode = DrawMode.None;
                                 _lines.Add(_drawingLine);
+                                _drawingLine.SetAxis();
                             }
                         }
-                        else if (_hoveringPoint2D != null)
+                        else if (_currentDrawMode == DrawMode.Frame2D && _hoveringPoint2D != null)
                         {
+                            if (_lines.Any(l =>
+                                l.FirstPoint == _drawingLine.FirstPoint &&
+                                l._curAxis == Line.GetAxis(_drawingLine.FirstPoint, _hoveringPoint2D.MainInstance)))
+                            {
+                                Debug.Log("Cannot draw on another line");
+                                break;
+                            }
+
                             _drawingLine.EndPoint = _hoveringPoint2D.MainInstance;
                             if (_drawingLine.Valid)
                             {
@@ -134,7 +155,10 @@ public class MouseManager : MonoBehaviour
                                 CurrentCommand = Command.None;
                                 _currentDrawMode = DrawMode.None;
                                 _lines.Add(_drawingLine);
+                                _drawingLine.SetAxis();
                             }
+                            else
+                                Debug.Log("Invalid Line");
                         }
 
                         break;
@@ -459,5 +483,19 @@ public class MouseManager : MonoBehaviour
                     break;
                 }
         }
+    }
+
+    public void Reset()
+    {
+        CancelInProgressCmd();
+        foreach (var t in _lines)
+        {
+            if (t.Instance2D != null)
+                Destroy(t.Instance2D.gameObject);
+            
+            Destroy(t.Instance3D.gameObject);
+        }
+
+        _lines = new List<Line>();
     }
 }

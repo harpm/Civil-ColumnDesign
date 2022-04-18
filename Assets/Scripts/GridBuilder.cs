@@ -58,6 +58,7 @@ public class GridBuilder : MonoBehaviour
 
     public void GenerateGrid(int x, int y, int s, float[] xSpaces, float[] ySpaces, float[] sSpaces)
     {
+        MainManager.Instance.MouseManager.Reset();
         ClearGrid();
 
         GridData = new GridPoint[x][][];

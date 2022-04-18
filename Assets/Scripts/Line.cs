@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public class Line
 {
     private GridPoint _firstPoint;
@@ -34,5 +36,42 @@ public class Line
     public SteelLine Instance3D;
     public SteelLine Instance2D;
 
+    public Axis _curAxis { get; private set; }
+
     public float Length;
+
+    public void SetAxis()
+    {
+        if (FirstPoint != null && EndPoint != null)
+        {
+            if (EndPoint.X == FirstPoint.X && EndPoint.Y == FirstPoint.Y && EndPoint.S != FirstPoint.S)
+                _curAxis = Axis.Y;
+            else if (EndPoint.X == FirstPoint.X && EndPoint.Y != FirstPoint.Y && EndPoint.S == FirstPoint.S)
+                _curAxis = Axis.Z;
+            else if (EndPoint.X != FirstPoint.X && EndPoint.Y == FirstPoint.Y && EndPoint.S == FirstPoint.S)
+                _curAxis = Axis.X;
+        }
+    }
+
+    public static Axis GetAxis(GridPoint f, GridPoint e)
+    {
+
+        if (e.X == f.X && e.Y == f.Y && e.S != f.S)
+            return Axis.Y;
+        else if (e.X == f.X && e.Y != f.Y && e.S == f.S)
+            return Axis.Z;
+        else if (e.X != f.X && e.Y == f.Y && e.S == f.S)
+            return Axis.X;
+        else
+            return Axis.Invalid;
+
+    }
+
+    public enum Axis
+    {
+        Invalid,
+        X,
+        Y,
+        Z
+    }
 }
