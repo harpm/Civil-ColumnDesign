@@ -9,21 +9,19 @@ public class SteelLine : MonoBehaviour
     [SerializeField]
     private CapsuleCollider _collider;
 
+    [SerializeField]
+    private Material _selectedMaterial;
+
+    [SerializeField]
+    private Material _mainMaterial;
+
     private Line _mainInstance;
 
     public Line MainInstance
     {
         get => _mainInstance;
-        set
-        {
-            FirstPointInstance = value.FirstPoint.Instance3D;
-            EndPointInstance = value.EndPoint.Instance3D;
-            _mainInstance = value;
-        }
+        set => _mainInstance = value;
     }
-
-    public GridPoint3D FirstPointInstance;
-    public GridPoint3D EndPointInstance;
 
     private Axis _curAxis;
 
@@ -53,11 +51,21 @@ public class SteelLine : MonoBehaviour
             _collider.center = Vector3.zero + new Vector3(0, 0, MainInstance.Length / 2);
     }
 
+    public void Select()
+    {
+        Renderer.material = _selectedMaterial;
+    }
+
+    public void Deselect()
+    {
+        Renderer.material = _mainMaterial;
+    }
+
     private void SetAxis()
     {
-        if (FirstPointInstance.MainInstance.X != EndPointInstance.MainInstance.X)
+        if (MainInstance.FirstPoint.X != MainInstance.EndPoint.X)
             _curAxis = Axis.X;
-        else if (FirstPointInstance.MainInstance.Y != EndPointInstance.MainInstance.Y)
+        else if (MainInstance.FirstPoint.Y != MainInstance.EndPoint.Y)
             _curAxis = Axis.Z;
         else
             _curAxis = Axis.Y;

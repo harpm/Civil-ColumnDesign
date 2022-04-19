@@ -49,18 +49,57 @@ public class Line
         {
             if (EndPoint.X == FirstPoint.X && EndPoint.Y == FirstPoint.Y && EndPoint.S != FirstPoint.S)
             {
-                _curAxis = Axis.Y;
+                _curAxis = EndPoint.S > FirstPoint.S ? Axis.Z : Axis.Nz;
+
                 if (_firstPoint.S > _endPoint.S)
                 {
                     var temp = _firstPoint;
                     _firstPoint = _endPoint;
                     _endPoint = temp;
+
+                    Instance3D.transform.position = _firstPoint.Instance3D.transform.position;
+
+                    if (Instance2D != null)
+                        Instance2D.transform.position = _firstPoint.Instance2D.transform.position;
+
+                    RedrawLines();
                 }
             }
             else if (EndPoint.X == FirstPoint.X && EndPoint.Y != FirstPoint.Y && EndPoint.S == FirstPoint.S)
-                _curAxis = Axis.Z;
+            {
+                _curAxis = EndPoint.Y > FirstPoint.Y ? Axis.Y : Axis.Ny;
+
+                if (_firstPoint.Y > _endPoint.Y)
+                {
+                    var temp = _firstPoint;
+                    _firstPoint = _endPoint;
+                    _endPoint = temp;
+
+                    Instance3D.transform.position = _firstPoint.Instance3D.transform.position;
+
+                    if (Instance2D != null)
+                        Instance2D.transform.position = _firstPoint.Instance2D.transform.position;
+
+                    RedrawLines();
+                }
+            }
             else if (EndPoint.X != FirstPoint.X && EndPoint.Y == FirstPoint.Y && EndPoint.S == FirstPoint.S)
-                _curAxis = Axis.X;
+            {
+                _curAxis = EndPoint.X > FirstPoint.X ? Axis.X : Axis.Nx;
+
+                if (_firstPoint.X > _endPoint.X)
+                {
+                    var temp = _firstPoint;
+                    _firstPoint = _endPoint;
+                    _endPoint = temp;
+
+                    Instance3D.transform.position = _firstPoint.Instance3D.transform.position;
+
+                    if (Instance2D != null)
+                        Instance2D.transform.position = _firstPoint.Instance2D.transform.position;
+                    RedrawLines();
+                }
+            }
             else
                 _curAxis = Axis.Invalid;
         }
@@ -80,17 +119,46 @@ public class Line
         Instance3D.AddCollider();
     }
 
+    public void Select()
+    {
+        if (Instance2D != null)
+            Instance2D.Select();
+
+        Instance3D.Select();
+    }
+
+    public void Deselect()
+    {
+        if (Instance2D != null)
+            Instance2D.Deselect();
+
+        Instance3D.Deselect();
+
+    }
+
+    private void RedrawLines()
+    {
+        if (Instance2D != null)
+        {
+            Instance2D.Renderer.SetPosition(0, FirstPoint.Instance2D.transform.position);
+            Instance2D.Renderer.SetPosition(1, EndPoint.Instance2D.transform.position);
+        }
+
+        Instance3D.Renderer.SetPosition(0, FirstPoint.Instance3D.transform.position);
+        Instance3D.Renderer.SetPosition(1, EndPoint.Instance3D.transform.position);
+    }
+
     // Utilities
 
     public static Axis GetAxis(GridPoint f, GridPoint e)
     {
 
         if (e.X == f.X && e.Y == f.Y && e.S != f.S)
-            return Axis.Y;
+            return e.Y > f.Y ? Axis.Y : Axis.Ny;
         else if (e.X == f.X && e.Y != f.Y && e.S == f.S)
-            return Axis.Z;
+            return e.S > f.S ? Axis.Z : Axis.Nz;
         else if (e.X != f.X && e.Y == f.Y && e.S == f.S)
-            return Axis.X;
+            return e.X > f.X ? Axis.X : Axis.Nx;
         else
             return Axis.Invalid;
 
@@ -101,6 +169,9 @@ public class Line
         Invalid,
         X,
         Y,
-        Z
+        Z,
+        Nx,
+        Ny,
+        Nz
     }
 }

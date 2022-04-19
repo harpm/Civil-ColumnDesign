@@ -78,7 +78,7 @@ LineRenderer:
   - {x: 0, y: 0, z: 1}
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.15
+    widthMultiplier: 0.25
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -96,8 +96,8 @@ LineRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 1}
+      key0: {r: 0.1209081, g: 0.7830189, b: 0, a: 1}
+      key1: {r: 0.8679245, g: 0, b: 0, a: 1}
       key2: {r: 0, g: 0, b: 0, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}
@@ -141,7 +141,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.075
+  m_Radius: 0.1
   m_Height: 1.25
   m_Direction: 2
   m_Center: {x: 0, y: 0, z: 0.5}
@@ -159,5 +159,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Renderer: {fileID: 2304020915546964629}
   _collider: {fileID: 8307209699466079267}
+  _selectedMaterial: {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
+  _mainMaterial: {fileID: 2100000, guid: 281642119027a7346ab3832089fdb543, type: 2}
   FirstPointInstance: {fileID: 0}
   EndPointInstance: {fileID: 0}

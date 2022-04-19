@@ -11,8 +11,11 @@ public class SteelLine2D : MonoBehaviour
     [SerializeField]
     private CapsuleCollider _collider;
 
-    public GridPoint2D FirstPointInstance;
-    public GridPoint2D EndPointInstance;
+    [SerializeField]
+    private Material _selectedMaterial;
+
+    [SerializeField]
+    private Material _mainMaterial;
 
     private Axis _curAxis;
 
@@ -21,12 +24,7 @@ public class SteelLine2D : MonoBehaviour
     public Line MainInstance
     {
         get => _mainInstance;
-        set
-        {
-            FirstPointInstance = value.FirstPoint.Instance2D;
-            EndPointInstance = value.EndPoint.Instance2D;
-            _mainInstance = value;
-        }
+        set => _mainInstance = value;
     }
 
     // Start is called before the first frame update
@@ -53,9 +51,19 @@ public class SteelLine2D : MonoBehaviour
             _collider.center = Vector3.zero + new Vector3(0, MainInstance.Length / 2, 0);
     }
 
+    public void Select()
+    {
+        Renderer.material = _selectedMaterial;
+    }
+
+    public void Deselect()
+    {
+        Renderer.material = _mainMaterial;
+    }
+
     private void SetAxis()
     {
-        if (FirstPointInstance.X != EndPointInstance.X)
+        if (MainInstance.FirstPoint.Instance2D.X != MainInstance.EndPoint.Instance2D.X)
             _curAxis = Axis.X;
         else
             _curAxis = Axis.Y;

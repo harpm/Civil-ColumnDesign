@@ -61,6 +61,8 @@ public class MouseManager : MonoBehaviour
 
     private List<Line> _lines = new List<Line>();
 
+    private Line _selectedLine = null;
+
     private Line _drawingLine;
 
 
@@ -86,6 +88,7 @@ public class MouseManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
+            var mPose = Input.mousePosition;
             switch (CurrentCommand)
             {
                 case Command.None:
@@ -302,6 +305,16 @@ public class MouseManager : MonoBehaviour
                     _hoveringPoint3D = null;
                 }
             }
+
+            if (Input.GetKeyDown(KeyCode.Mouse0))
+            {
+                if (_selectedLine != null)
+                    DeselectLine();
+                else if (TryHitLine(localPose, _3DCamera, out SteelLine sl))
+                {
+                    SelectLine(sl.MainInstance);
+                }
+            }
         }
         else if (TryHitRenderer(mPose, _2DRenderScreen, out Vector2 localPose2D))
         {
@@ -320,6 +333,17 @@ public class MouseManager : MonoBehaviour
                     _hoveringPoint2D = null;
                 }
             }
+
+            if (Input.GetKeyDown(KeyCode.Mouse0))
+            {
+                if (_selectedLine != null)
+                    DeselectLine();
+                else if (TryHitLine(localPose, _2DCamera, out SteelLine2D sl))
+                {
+                    SelectLine(sl.MainInstance);
+                }
+            }
+
         }
         else
         {
@@ -420,6 +444,40 @@ public class MouseManager : MonoBehaviour
         return res;
     }
 
+    private bool TryHitLine(Vector3 localPose, Camera camera, out SteelLine line)
+    {
+        bool res = false;
+        line = null;
+
+        localPose = new Vector3(localPose.x * camera.pixelWidth, localPose.y * camera.pixelHeight);
+        var ray = camera.ScreenPointToRay(localPose);
+        if (Physics.Raycast(ray, out RaycastHit hit))
+        {
+            if (hit.collider != null && hit.collider.TryGetComponent(out line))
+                res = true;
+        }
+
+
+        return res;
+    }
+
+    private bool TryHitLine(Vector3 localPose, Camera camera, out SteelLine2D line)
+    {
+        bool res = false;
+        line = null;
+
+        localPose = new Vector3(localPose.x * camera.pixelWidth, localPose.y * camera.pixelHeight);
+        var ray = camera.ScreenPointToRay(localPose);
+        if (Physics.Raycast(ray, out RaycastHit hit))
+        {
+            if (hit.collider != null && hit.collider.TryGetComponent(out line))
+                res = true;
+        }
+
+
+        return res;
+    }
+
     private bool TryHitPoint(Vector3 localPose, Camera camera, out GridPoint3D point)
     {
         bool res = false;
@@ -451,6 +509,18 @@ public class MouseManager : MonoBehaviour
 
 
         return res;
+    }
+
+    private void SelectLine(Line line)
+    {
+        _selectedLine = line;
+        _selectedLine.Select();
+    }
+
+    private void DeselectLine()
+    {
+        _selectedLine.Deselect();
+        _selectedLine = null;
     }
 
     public enum Command
