@@ -38,6 +38,9 @@ public class MouseManager : MonoBehaviour
     [SerializeField]
     private SteelLine _linePrefab;
 
+    [SerializeField]
+    private SteelLine2D _linePrefab2D;
+
     [HideInInspector]
     public Vector3 CurrentRotation;
 
@@ -177,6 +180,7 @@ public class MouseManager : MonoBehaviour
             case DrawMode.Frame3D:
                 {
                     _drawingLine.Instance3D = Instantiate(_linePrefab, _3DLineParentTransform);
+                    _drawingLine.Instance3D.transform.position = _hoveringPoint3D.transform.position;
                     _drawingLine.Instance3D.Renderer.positionCount = 2;
 
                     _drawingLine.Instance3D.Renderer.SetPosition(0,
@@ -187,7 +191,9 @@ public class MouseManager : MonoBehaviour
                 }
             case DrawMode.Frame2D:
                 {
-                    _drawingLine.Instance2D = Instantiate(_linePrefab, _2DLineParentTransform);
+                    _drawingLine.Instance2D = Instantiate(_linePrefab2D, _2DLineParentTransform);
+                    _drawingLine.Instance2D.transform.position = _hoveringPoint2D.transform.position;
+
                     _drawingLine.Instance2D.Renderer.positionCount = 2;
 
                     _drawingLine.Instance2D.Renderer.SetPosition(0,
@@ -231,6 +237,7 @@ public class MouseManager : MonoBehaviour
                         _drawingLine.EndPoint.Instance3D.transform.position);
 
                     Sync2DInstance();
+                    _drawingLine.AddCollider();
                     break;
                 }
             case DrawMode.Frame2D:
@@ -238,6 +245,7 @@ public class MouseManager : MonoBehaviour
                     _drawingLine.Instance2D.Renderer.SetPosition(1,
                         _drawingLine.EndPoint.Instance2D.transform.position);
                     Sync3DInstance();
+                    _drawingLine.AddCollider();
                     break;
                 }
         }
@@ -246,6 +254,8 @@ public class MouseManager : MonoBehaviour
     private void Sync3DInstance()
     {
         _drawingLine.Instance3D = Instantiate(_linePrefab, _3DLineParentTransform);
+        _drawingLine.Instance3D.transform.position = _drawingLine.FirstPoint.Instance3D.transform.position;
+
         _drawingLine.Instance3D.Renderer.positionCount = 2;
 
         _drawingLine.Instance3D.Renderer.SetPosition(0,
@@ -259,7 +269,10 @@ public class MouseManager : MonoBehaviour
         if (_drawingLine.FirstPoint.Instance2D == null
             || _drawingLine.EndPoint.Instance2D == null)
             return;
-        _drawingLine.Instance2D = Instantiate(_linePrefab, _2DLineParentTransform);
+
+        _drawingLine.Instance2D = Instantiate(_linePrefab2D, _2DLineParentTransform);
+        _drawingLine.Instance2D.transform.position = _drawingLine.FirstPoint.Instance2D.transform.position;
+
         _drawingLine.Instance2D.Renderer.positionCount = 2;
 
         _drawingLine.Instance2D.Renderer.SetPosition(0,

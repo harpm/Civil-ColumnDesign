@@ -34,7 +34,7 @@ public class Line
     }
 
     public SteelLine Instance3D;
-    public SteelLine Instance2D;
+    public SteelLine2D Instance2D;
 
     public Axis _curAxis { get; private set; }
 
@@ -61,7 +61,23 @@ public class Line
                 _curAxis = Axis.Z;
             else if (EndPoint.X != FirstPoint.X && EndPoint.Y == FirstPoint.Y && EndPoint.S == FirstPoint.S)
                 _curAxis = Axis.X;
+            else
+                _curAxis = Axis.Invalid;
         }
+        else
+            _curAxis = Axis.Invalid;
+    }
+
+    public void AddCollider()
+    {
+        if (Instance2D != null)
+        {
+            Instance2D.MainInstance = this;
+            Instance2D.AddCollider();
+        }
+
+        Instance3D.MainInstance = this;
+        Instance3D.AddCollider();
     }
 
     // Utilities

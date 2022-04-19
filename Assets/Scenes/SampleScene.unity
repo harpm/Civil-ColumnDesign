@@ -8976,7 +8976,8 @@ MonoBehaviour:
   _2DRenderScreen: {fileID: 1096782570}
   _3DLineParentTransform: {fileID: 354405825}
   _2DLineParentTransform: {fileID: 1800693608}
-  _linePrefab: {fileID: 3624449812440762641, guid: 543d88b826bc6fd43a4a9959d3050d8d, type: 3}
+  _linePrefab: {fileID: 5040235362536259305, guid: 543d88b826bc6fd43a4a9959d3050d8d, type: 3}
+  _linePrefab2D: {fileID: 1504093661247158425, guid: d8950203dd2b0ba4e8176c73344d98c4, type: 3}
   CurrentRotation: {x: 0, y: 0, z: 0}
   CurrentCommand: 0
   RotateX: 0
