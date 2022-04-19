@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Line
+public class Line : MonoBehaviour
 {
     private GridPoint _firstPoint;
     private GridPoint _endPoint;
@@ -173,7 +173,8 @@ public class Line
 
     public enum ConnectionType
     {
-        
+        FixedConnection,
+        PinConnection
     }
 
     public enum Axis

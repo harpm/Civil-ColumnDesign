@@ -28,6 +28,9 @@ public class MouseManager : MonoBehaviour
     private RawImage _2DRenderScreen;
 
     [SerializeField]
+    private Transform _mainLineParentTransform;
+
+    [SerializeField]
     private Transform _3DLineParentTransform;
 
     [SerializeField]
@@ -36,7 +39,10 @@ public class MouseManager : MonoBehaviour
 
     [Header("Prefabs")]
     [SerializeField]
-    private SteelLine _linePrefab;
+    private Line _linePrefab;
+
+    [SerializeField]
+    private SteelLine _linePrefab3D;
 
     [SerializeField]
     private SteelLine2D _linePrefab2D;
@@ -100,20 +106,20 @@ public class MouseManager : MonoBehaviour
                         if (_hoveringPoint3D != null)
                         {
                             _currentDrawMode = DrawMode.Frame3D;
-                            _drawingLine = new Line
-                            {
-                                FirstPoint = _hoveringPoint3D.MainInstance
-                            };
+                            _drawingLine = Instantiate(_linePrefab, _mainLineParentTransform);
+
+                            _drawingLine.FirstPoint = _hoveringPoint3D.MainInstance;
+                            
                             StartDrawing();
                             CurrentCommand = Command.DrawLineEndPoint;
                         }
                         else if (_hoveringPoint2D != null)
                         {
                             _currentDrawMode = DrawMode.Frame2D;
-                            _drawingLine = new Line
-                            {
-                                FirstPoint = _hoveringPoint2D.MainInstance
-                            };
+                            _drawingLine = Instantiate(_linePrefab, _mainLineParentTransform);
+
+                            _drawingLine.FirstPoint = _hoveringPoint2D.MainInstance;
+
                             StartDrawing();
                             CurrentCommand = Command.DrawLineEndPoint;
                         }
@@ -182,7 +188,7 @@ public class MouseManager : MonoBehaviour
         {
             case DrawMode.Frame3D:
                 {
-                    _drawingLine.Instance3D = Instantiate(_linePrefab, _3DLineParentTransform);
+                    _drawingLine.Instance3D = Instantiate(_linePrefab3D, _3DLineParentTransform);
                     _drawingLine.Instance3D.transform.position = _hoveringPoint3D.transform.position;
                     _drawingLine.Instance3D.Renderer.positionCount = 2;
 
@@ -256,7 +262,7 @@ public class MouseManager : MonoBehaviour
 
     private void Sync3DInstance()
     {
-        _drawingLine.Instance3D = Instantiate(_linePrefab, _3DLineParentTransform);
+        _drawingLine.Instance3D = Instantiate(_linePrefab3D, _3DLineParentTransform);
         _drawingLine.Instance3D.transform.position = _drawingLine.FirstPoint.Instance3D.transform.position;
 
         _drawingLine.Instance3D.Renderer.positionCount = 2;
@@ -514,21 +520,14 @@ public class MouseManager : MonoBehaviour
     private void SelectLine(Line line)
     {
         _selectedLine = line;
-
-        if (line._curAxis == Line.Axis.Z || line._curAxis == Line.Axis.Nz)
-            MainManager.Instance.InspectorWindow.DisplayColumnInspector(line.Length, line.AliveForces, line.DeadForces,
-                line.HigherConnection, line.LowerConnection);
-        else
-            MainManager.Instance.InspectorWindow.DisplayBeamInspector(line.Length, line.Inertia, line.HigherConnection,
-                line.LowerConnection);
-
+        MainManager.Instance.InspectorWindow.SelectLine(line);
         _selectedLine.Select();
     }
 
     private void DeselectLine()
     {
         _selectedLine.Deselect();
-        MainManager.Instance.InspectorWindow.DisplayOffInspector();
+        MainManager.Instance.InspectorWindow.DeselectLine();
         _selectedLine = null;
     }
 
@@ -541,7 +540,7 @@ public class MouseManager : MonoBehaviour
         PutLineAll = 2
     }
 
-    public enum DrawMode
+    private enum DrawMode
     {
         None,
         Frame3D,
@@ -567,7 +566,8 @@ public class MouseManager : MonoBehaviour
                     {
                         Destroy(_drawingLine.Instance2D.gameObject);
                     }
-
+                    
+                    Destroy(_drawingLine.gameObject);
                     _drawingLine = null;
                     CurrentCommand = Command.None;
                     _currentDrawMode = DrawMode.None;

@@ -20,6 +20,12 @@ public class InspectorManager : MonoBehaviour
     private GameObject _inertia;
 
     [SerializeField]
+    private GameObject _hConnectionObj;
+
+    [SerializeField]
+    private GameObject _lConnectionObj;
+
+    [SerializeField]
     private TMP_InputField _aliveForceInp;
 
     [SerializeField]
@@ -34,6 +40,10 @@ public class InspectorManager : MonoBehaviour
     [SerializeField]
     private TMP_Dropdown _lConnection;
 
+    private Line _selectedLine;
+
+    private LineType _selectedLineType;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -46,29 +56,51 @@ public class InspectorManager : MonoBehaviour
         
     }
 
-    public void DisplayColumnInspector(float length, float aliveForce, float deadForce, Line.ConnectionType hConnType,
-        Line.ConnectionType lConnType)
+    public void SelectLine(Line line)
+    {
+        _selectedLine = line;
+        if (line._curAxis == Line.Axis.Z || line._curAxis == Line.Axis.Nz)
+        {
+            _selectedLineType = LineType.Column;
+            DisplayColumnInspector(line.Length, line.AliveForces, line.DeadForces);
+        }
+        else
+        {
+            _selectedLineType = LineType.Beam;
+            DisplayBeamInspector(line.Length, line.Inertia, line.HigherConnection,
+                line.LowerConnection);
+        }
+
+    }
+
+    public void DeselectLine()
+    {
+        Apply();
+        DisplayOffInspector();
+    }
+
+    private void DisplayColumnInspector(float length, float aliveForce, float deadForce)
     {
         Content.SetActive(true);
         _forces.SetActive(true);
 
-        _title.text = "Column";
+        _title.text = _selectedLineType.ToString();
         
 
         _length.text = length + " m";
         _aliveForceInp.text = aliveForce.ToString();
         _deadForceInp.text = deadForce.ToString();
-        _hConnection.value = (int) hConnType;
-        _lConnection.value = (int) lConnType;
     }
 
-    public void DisplayBeamInspector(float length, float inertia, Line.ConnectionType hConnType,
+    private void DisplayBeamInspector(float length, float inertia, Line.ConnectionType hConnType,
         Line.ConnectionType lConnType)
     {
         Content.SetActive(true);
         _inertia.SetActive(true);
+        _hConnectionObj.SetActive(true);
+        _lConnectionObj.SetActive(true);
 
-        _title.text = "Beam";
+        _title.text = _selectedLineType.ToString();
 
         _length.text = length + " m";
         _inertiaInp.text = inertia.ToString();
@@ -76,10 +108,33 @@ public class InspectorManager : MonoBehaviour
         _lConnection.value = (int)lConnType;
     }
 
-    public void DisplayOffInspector()
+    private void DisplayOffInspector()
     {
         _forces.SetActive(false);
         _inertia.SetActive(false);
+        _hConnectionObj.SetActive(false);
+        _lConnectionObj.SetActive(false);
         Content.SetActive(false);
+    }
+
+    private void Apply()
+    {
+        if (_selectedLineType == LineType.Column)
+        {
+            _selectedLine.AliveForces = float.Parse(_aliveForceInp.text);
+            _selectedLine.DeadForces = float.Parse(_deadForceInp.text);
+        }
+        else
+        {
+            _selectedLine.Inertia = float.Parse(_inertiaInp.text);
+            _selectedLine.HigherConnection = (Line.ConnectionType)_hConnection.value;
+            _selectedLine.LowerConnection = (Line.ConnectionType)_lConnection.value;
+        }
+    }
+
+    private enum LineType
+    {
+        Column,
+        Beam
     }
 }
