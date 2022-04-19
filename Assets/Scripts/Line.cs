@@ -38,10 +38,17 @@ public class Line
 
     public Axis _curAxis { get; private set; }
 
-    public float Length
-    {
-        get => (_firstPoint.Instance3D.transform.position - _endPoint.Instance3D.transform.position).magnitude;
-    }
+    public float Length => 
+        (_firstPoint.Instance3D.transform.position - _endPoint.Instance3D.transform.position).magnitude;
+
+    public float AliveForces = 0.0f;
+    public float DeadForces = 0.0f;
+
+    public float Inertia = 0.0f;
+
+    public ConnectionType HigherConnection;
+    public ConnectionType LowerConnection;
+
 
     public void SetAxis()
     {
@@ -162,6 +169,11 @@ public class Line
         else
             return Axis.Invalid;
 
+    }
+
+    public enum ConnectionType
+    {
+        
     }
 
     public enum Axis

@@ -45,4 +45,41 @@ public class InspectorManager : MonoBehaviour
     {
         
     }
+
+    public void DisplayColumnInspector(float length, float aliveForce, float deadForce, Line.ConnectionType hConnType,
+        Line.ConnectionType lConnType)
+    {
+        Content.SetActive(true);
+        _forces.SetActive(true);
+
+        _title.text = "Column";
+        
+
+        _length.text = length + " m";
+        _aliveForceInp.text = aliveForce.ToString();
+        _deadForceInp.text = deadForce.ToString();
+        _hConnection.value = (int) hConnType;
+        _lConnection.value = (int) lConnType;
+    }
+
+    public void DisplayBeamInspector(float length, float inertia, Line.ConnectionType hConnType,
+        Line.ConnectionType lConnType)
+    {
+        Content.SetActive(true);
+        _inertia.SetActive(true);
+
+        _title.text = "Beam";
+
+        _length.text = length + " m";
+        _inertiaInp.text = inertia.ToString();
+        _hConnection.value = (int)hConnType;
+        _lConnection.value = (int)lConnType;
+    }
+
+    public void DisplayOffInspector()
+    {
+        _forces.SetActive(false);
+        _inertia.SetActive(false);
+        Content.SetActive(false);
+    }
 }

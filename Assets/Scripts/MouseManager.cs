@@ -514,12 +514,21 @@ public class MouseManager : MonoBehaviour
     private void SelectLine(Line line)
     {
         _selectedLine = line;
+
+        if (line._curAxis == Line.Axis.Z || line._curAxis == Line.Axis.Nz)
+            MainManager.Instance.InspectorWindow.DisplayColumnInspector(line.Length, line.AliveForces, line.DeadForces,
+                line.HigherConnection, line.LowerConnection);
+        else
+            MainManager.Instance.InspectorWindow.DisplayBeamInspector(line.Length, line.Inertia, line.HigherConnection,
+                line.LowerConnection);
+
         _selectedLine.Select();
     }
 
     private void DeselectLine()
     {
         _selectedLine.Deselect();
+        MainManager.Instance.InspectorWindow.DisplayOffInspector();
         _selectedLine = null;
     }
 
