@@ -42,6 +42,10 @@ public class GridBuilder : MonoBehaviour
     private GridPoint[][][] GridData;
     private GridPoint2D[][] SliceData;
 
+    public int NumberX = 0;
+    public int NumberY = 0;
+    public int NumberS = 0;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -58,6 +62,10 @@ public class GridBuilder : MonoBehaviour
 
     public void GenerateGrid(int x, int y, int s, float[] xSpaces, float[] ySpaces, float[] sSpaces)
     {
+        NumberX = x;
+        NumberY = y;
+        NumberS = s;
+
         MainManager.Instance.MouseManager.Reset();
         ClearGrid();
 
@@ -153,7 +161,7 @@ public class GridBuilder : MonoBehaviour
 
     #region 2D Grid
 
-    private void ShowSliceX(int x)
+    public void ShowSliceX(int x)
     {
         _sliceTitle.text = "X - " + (x + 1);
         SliceData = new GridPoint2D[GridData[x].Length][];
@@ -212,7 +220,7 @@ public class GridBuilder : MonoBehaviour
         }
     }
 
-    private void ShowSliceY(int y)
+    public void ShowSliceY(int y)
     {
         _sliceTitle.text = "Y - " + (y + 1);
 
@@ -278,7 +286,7 @@ public class GridBuilder : MonoBehaviour
         }
     }
 
-    private void ShowSliceS(int s)
+    public void ShowSliceS(int s)
     {
         _sliceTitle.text = "Story - " + (s + 1);
 

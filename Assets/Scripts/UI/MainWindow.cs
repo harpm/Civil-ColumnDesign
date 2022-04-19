@@ -7,6 +7,9 @@ public class MainWindow : MonoBehaviour
     private CreateGridWindow _createGridWindow;
 
     [SerializeField]
+    private ViewWindow _changeViewWindow;
+
+    [SerializeField]
     private GameObject _errorWindow;
 
     [SerializeField]
@@ -30,6 +33,13 @@ public class MainWindow : MonoBehaviour
     public void OpenCreatGridWindow()
     {
         _createGridWindow.gameObject.SetActive(true);
+    }
+
+    public void OpenChangeViewWindow()
+    {
+        _changeViewWindow.gameObject.SetActive(true);
+        _createGridWindow.Close();
+        _changeViewWindow.SetValues();
     }
 
     public void ShowError(string message)
