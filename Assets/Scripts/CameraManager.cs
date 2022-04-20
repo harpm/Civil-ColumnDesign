@@ -46,5 +46,4 @@ public class CameraManager : MonoBehaviour
         _2DCamera.transform.position = new Vector3(center.x - 1, center.y + 2,
             center.z - _3DCamera.transform.forward.normalized.z * distance * 2.25f);
     }
-
 }

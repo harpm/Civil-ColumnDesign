@@ -590,4 +590,28 @@ public class MouseManager : MonoBehaviour
 
         _lines = new List<Line>();
     }
+
+    public void DeleteSteelLine(Line line)
+    {
+        _lines.Remove(line);
+
+        if (line.Instance2D != null)
+        {
+            Destroy(line.Instance2D.gameObject);
+        }
+
+        Destroy(line.Instance3D.gameObject);
+        Destroy(line.gameObject);
+    }
+
+    public void ClearSteelLines()
+    {
+        var count = _lines.Count;
+        for (int i = 0; i < count; i++)
+        {
+            DeleteSteelLine(_lines[i]);
+        }
+
+        _lines = new List<Line>();
+    }
 }

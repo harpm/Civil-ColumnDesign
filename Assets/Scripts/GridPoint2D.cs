@@ -44,14 +44,14 @@ public class GridPoint2D : MonoBehaviour
         {
             x = PreviousX.transform.localPosition.x;
             if (X > PreviousX.X)
-                x += MainInstance.SpaceX;
+                x += SpacingX;
         }
 
         if (PreviousY != null)
         {
             y = PreviousY.transform.localPosition.y;
             if (Y > PreviousY.Y)
-                y += MainInstance.SpaceY;
+                y += SpacingY;
         }
 
         transform.localPosition = new Vector3(x, y);

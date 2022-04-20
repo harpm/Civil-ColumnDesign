@@ -31,10 +31,16 @@ public class GridBuilder : MonoBehaviour
     public Transform Parent3DGridLines;
 
     [SerializeField]
+    public Transform Parent3DSteelLines;
+
+    [SerializeField]
     public Transform Parent2DGridPoints;
 
     [SerializeField]
     public Transform Parent2DGridLines;
+
+    [SerializeField]
+    public Transform Parent2DSteelLines;
 
     [SerializeField]
     private TextMeshProUGUI _sliceTitle;
@@ -190,10 +196,10 @@ public class GridBuilder : MonoBehaviour
                 // Draw Lines
 
                 if (i > 0)
-                    DrawSingleLine2D(point.PreviousX.transform.position, point.transform.position);
+                    DrawSingleLine2D(SliceData[i - 1][j].transform.position, point.transform.position);
 
                 if (j > 0)
-                    DrawSingleLine2D(point.PreviousY.transform.position, point.transform.position);
+                    DrawSingleLine2D(SliceData[i][j - 1].transform.position, point.transform.position);
 
                 // Draw Labels
                 if (i == 0)
@@ -401,6 +407,12 @@ public class GridBuilder : MonoBehaviour
             Destroy(Parent2DGridLines.GetChild(i).gameObject);
         }
 
+        count = Parent2DSteelLines.childCount;
+        for (int i = 0; i < count; i++)
+        {
+            Destroy(Parent2DSteelLines.GetChild(i).gameObject);
+        }
+
         SliceData = default;
     }
 
@@ -422,8 +434,10 @@ public class GridBuilder : MonoBehaviour
             Destroy(Parent3DGridLines.GetChild(i).gameObject);
         }
 
+        MainManager.Instance.MouseManager.ClearSteelLines();
+
         GridData = default;
 
-        MainManager.Instance.MainWindow.StatusMessage("Cleared Grid!" , MainWindow.MessageType.Info);
+        MainManager.Instance.MainWindow.StatusMessage("Cleared Grid!", MainWindow.MessageType.Info);
     }
 }
