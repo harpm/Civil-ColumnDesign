@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -68,7 +69,7 @@ public class InspectorManager : MonoBehaviour
         {
             _selectedLineType = LineType.Beam;
             DisplayBeamInspector(line.Length, line.Inertia, line.HigherConnection,
-                line.LowerConnection);
+                line.LowerConnection, line.IsOnGround);
         }
 
     }
@@ -93,7 +94,7 @@ public class InspectorManager : MonoBehaviour
     }
 
     private void DisplayBeamInspector(float length, float inertia, Line.ConnectionType hConnType,
-        Line.ConnectionType lConnType)
+        Line.ConnectionType lConnType, bool isOnGround)
     {
         Content.SetActive(true);
         _inertia.SetActive(true);
@@ -106,6 +107,23 @@ public class InspectorManager : MonoBehaviour
         _inertiaInp.text = inertia.ToString();
         _hConnection.value = (int)hConnType;
         _lConnection.value = (int)lConnType;
+
+        _hConnection.ClearOptions();
+        _lConnection.ClearOptions();
+
+        var options = new List<TMP_Dropdown.OptionData>();
+        options.Add(new TMP_Dropdown.OptionData("Fixed"));
+        options.Add(new TMP_Dropdown.OptionData("Pinned"));
+        
+        if (!isOnGround)
+        {
+            options.Add(new TMP_Dropdown.OptionData("Console"));
+            options.Add(new TMP_Dropdown.OptionData("Roller Support"));
+        }
+        
+        _hConnection.AddOptions(options);
+        _lConnection.AddOptions(options);
+
     }
 
     private void DisplayOffInspector()

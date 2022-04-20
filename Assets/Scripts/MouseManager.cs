@@ -65,7 +65,7 @@ public class MouseManager : MonoBehaviour
     private GridPoint3D _hoveringPoint3D;
     private GridPoint2D _hoveringPoint2D;
 
-    private List<Line> _lines = new List<Line>();
+    public List<Line> Lines = new List<Line>();
 
     private Line _selectedLine = null;
 
@@ -132,7 +132,7 @@ public class MouseManager : MonoBehaviour
 
                         if (_currentDrawMode == DrawMode.Frame3D && _hoveringPoint3D != null)
                         {
-                            if (_lines.Any(l =>
+                            if (Lines.Any(l =>
                                 l.FirstPoint == _drawingLine.FirstPoint &&
                                 l._curAxis == Line.GetAxis(_drawingLine.FirstPoint, _hoveringPoint3D.MainInstance)))
                             {
@@ -146,13 +146,13 @@ public class MouseManager : MonoBehaviour
                                 EndDrawing();
                                 CurrentCommand = Command.None;
                                 _currentDrawMode = DrawMode.None;
-                                _lines.Add(_drawingLine);
+                                Lines.Add(_drawingLine);
                                 _drawingLine.SetAxis();
                             }
                         }
                         else if (_currentDrawMode == DrawMode.Frame2D && _hoveringPoint2D != null)
                         {
-                            if (_lines.Any(l =>
+                            if (Lines.Any(l =>
                                 l.FirstPoint == _drawingLine.FirstPoint &&
                                 l._curAxis == Line.GetAxis(_drawingLine.FirstPoint, _hoveringPoint2D.MainInstance)))
                             {
@@ -166,7 +166,7 @@ public class MouseManager : MonoBehaviour
                                 EndDrawing();
                                 CurrentCommand = Command.None;
                                 _currentDrawMode = DrawMode.None;
-                                _lines.Add(_drawingLine);
+                                Lines.Add(_drawingLine);
                                 _drawingLine.SetAxis();
                             }
                             else
@@ -580,7 +580,7 @@ public class MouseManager : MonoBehaviour
     public void Reset()
     {
         CancelInProgressCmd();
-        foreach (var t in _lines)
+        foreach (var t in Lines)
         {
             if (t.Instance2D != null)
                 Destroy(t.Instance2D.gameObject);
@@ -588,12 +588,12 @@ public class MouseManager : MonoBehaviour
             Destroy(t.Instance3D.gameObject);
         }
 
-        _lines = new List<Line>();
+        Lines = new List<Line>();
     }
 
     public void DeleteSteelLine(Line line)
     {
-        _lines.Remove(line);
+        Lines.Remove(line);
 
         if (line.Instance2D != null)
         {
@@ -606,12 +606,12 @@ public class MouseManager : MonoBehaviour
 
     public void ClearSteelLines()
     {
-        var count = _lines.Count;
+        var count = Lines.Count;
         for (int i = 0; i < count; i++)
         {
-            DeleteSteelLine(_lines[i]);
+            DeleteSteelLine(Lines[i]);
         }
 
-        _lines = new List<Line>();
+        Lines = new List<Line>();
     }
 }

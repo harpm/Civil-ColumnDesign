@@ -5802,8 +5802,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4278239287
+  m_fontColor: {r: 0.21379562, g: 0.754717, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -10958,8 +10958,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4278190306
+  m_fontColor: {r: 0.8867924, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -11160,6 +11160,7 @@ MonoBehaviour:
   CurrentCommand: 0
   RotateX: 0
   RotateY: 0
+  Lines: []
 --- !u!4 &642969088
 Transform:
   m_ObjectHideFlags: 0
@@ -16903,8 +16904,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278231309
-  m_fontColor: {r: 0.050980393, g: 0.6313726, b: 0, a: 1}
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -18969,8 +18970,10 @@ MonoBehaviour:
   _spacingLabelPrefab: {fileID: 2314263776091458877, guid: e0383018777174247861d36ebc0b277c, type: 3}
   Parent3DGridPoints: {fileID: 1803091363}
   Parent3DGridLines: {fileID: 1680497418}
+  Parent3DSteelLines: {fileID: 354405825}
   Parent2DGridPoints: {fileID: 705498931}
   Parent2DGridLines: {fileID: 1696203020}
+  Parent2DSteelLines: {fileID: 1800693608}
   _sliceTitle: {fileID: 1645102858}
   NumberX: 0
   NumberY: 0
@@ -20835,8 +20838,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190335
-  m_fontColor: {r: 1, g: 0, b: 0, a: 1}
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:

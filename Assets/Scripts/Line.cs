@@ -49,6 +49,8 @@ public class Line : MonoBehaviour
     public ConnectionType HigherConnection;
     public ConnectionType LowerConnection;
 
+    public bool IsOnGround = false;
+
 
     public void SetAxis()
     {
@@ -112,6 +114,11 @@ public class Line : MonoBehaviour
         }
         else
             _curAxis = Axis.Invalid;
+
+        if (FirstPoint.S == 1 && EndPoint.S == 1)
+            IsOnGround = true;
+        else
+            IsOnGround = false;
     }
 
     public void AddCollider()
