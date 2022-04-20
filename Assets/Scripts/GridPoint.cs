@@ -45,4 +45,6 @@ public class GridPoint
         SpaceY = spaceY;
         SpaceS = spaceS;
     }
+
+    public bool IsEmpty = true;
 }

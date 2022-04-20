@@ -121,7 +121,7 @@ public class Line : MonoBehaviour
             IsOnGround = false;
     }
 
-    public void AddCollider()
+    public void FinalizeDrawing()
     {
         if (Instance2D != null)
         {
@@ -131,6 +131,9 @@ public class Line : MonoBehaviour
 
         Instance3D.MainInstance = this;
         Instance3D.AddCollider();
+
+        FirstPoint.IsEmpty = false;
+        EndPoint.IsEmpty = false;
     }
 
     public void Select()

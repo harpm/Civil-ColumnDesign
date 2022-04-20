@@ -109,7 +109,7 @@ public class MouseManager : MonoBehaviour
                             _drawingLine = Instantiate(_linePrefab, _mainLineParentTransform);
 
                             _drawingLine.FirstPoint = _hoveringPoint3D.MainInstance;
-                            
+
                             StartDrawing();
                             CurrentCommand = Command.DrawLineEndPoint;
                         }
@@ -246,7 +246,8 @@ public class MouseManager : MonoBehaviour
                         _drawingLine.EndPoint.Instance3D.transform.position);
 
                     Sync2DInstance();
-                    _drawingLine.AddCollider();
+                    _drawingLine.FinalizeDrawing();
+
                     break;
                 }
             case DrawMode.Frame2D:
@@ -254,7 +255,7 @@ public class MouseManager : MonoBehaviour
                     _drawingLine.Instance2D.Renderer.SetPosition(1,
                         _drawingLine.EndPoint.Instance2D.transform.position);
                     Sync3DInstance();
-                    _drawingLine.AddCollider();
+                    _drawingLine.FinalizeDrawing();
                     break;
                 }
         }
@@ -566,7 +567,7 @@ public class MouseManager : MonoBehaviour
                     {
                         Destroy(_drawingLine.Instance2D.gameObject);
                     }
-                    
+
                     Destroy(_drawingLine.gameObject);
                     _drawingLine = null;
                     CurrentCommand = Command.None;
@@ -584,7 +585,7 @@ public class MouseManager : MonoBehaviour
         {
             if (t.Instance2D != null)
                 Destroy(t.Instance2D.gameObject);
-            
+
             Destroy(t.Instance3D.gameObject);
         }
 
@@ -602,6 +603,12 @@ public class MouseManager : MonoBehaviour
 
         Destroy(line.Instance3D.gameObject);
         Destroy(line.gameObject);
+
+        if (!Lines.Exists(l => l.FirstPoint == line.FirstPoint || l.EndPoint == line.FirstPoint))
+            line.FirstPoint.IsEmpty = true;
+
+        if (!Lines.Exists(l => l.FirstPoint == line.EndPoint || l.EndPoint == line.EndPoint))
+            line.EndPoint.IsEmpty = true;
     }
 
     public void ClearSteelLines()
