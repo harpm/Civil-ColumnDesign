@@ -163,6 +163,8 @@ public class GridBuilder : MonoBehaviour
 
     public void ShowSliceX(int x)
     {
+        ClearGrid2D();
+
         _sliceTitle.text = "X - " + (x + 1);
         SliceData = new GridPoint2D[GridData[x].Length][];
         for (int i = 0; i < GridData[x].Length; i++)
@@ -184,7 +186,15 @@ public class GridBuilder : MonoBehaviour
                     point.PreviousY = SliceData[i][j - 1];
 
                 point.AdjustPosition();
-                
+
+                // Draw Lines
+
+                if (i > 0)
+                    DrawSingleLine2D(point.PreviousX.transform.position, point.transform.position);
+
+                if (j > 0)
+                    DrawSingleLine2D(point.PreviousY.transform.position, point.transform.position);
+
                 // Draw Labels
                 if (i == 0)
                 {
@@ -222,6 +232,7 @@ public class GridBuilder : MonoBehaviour
 
     public void ShowSliceY(int y)
     {
+        ClearGrid2D();
         _sliceTitle.text = "Y - " + (y + 1);
 
         SliceData = new GridPoint2D[GridData.Length][];
@@ -245,18 +256,19 @@ public class GridBuilder : MonoBehaviour
 
                 point.AdjustPosition();
 
+                // Draw Lines
+
                 if (i > 0)
-                    DrawSingleLine2D(point.PreviousX.transform.localPosition, point.transform.localPosition);
+                    DrawSingleLine2D(point.PreviousX.transform.position, point.transform.position);
 
                 if (j > 0)
-                    DrawSingleLine2D(point.PreviousY.transform.localPosition, point.transform.localPosition);
+                    DrawSingleLine2D(point.PreviousY.transform.position, point.transform.position);
 
                 // Draw Labels
                 if (i == 0)
                 {
                     var label = Instantiate(_labelFramePrefab, Parent2DGridPoints);
-                    label.transform.localPosition = new Vector3(point.transform.localPosition.x - 3,
-                        point.transform.localPosition.y);
+                    label.transform.localPosition = new Vector3(point.transform.localPosition.x - 3, point.transform.localPosition.y);
                     label.text.text = "S" + (j + 1);
 
                     if (j > 0)
@@ -288,6 +300,8 @@ public class GridBuilder : MonoBehaviour
 
     public void ShowSliceS(int s)
     {
+        ClearGrid2D();
+
         _sliceTitle.text = "Story - " + (s + 1);
 
         SliceData = new GridPoint2D[GridData.Length][];
@@ -372,6 +386,24 @@ public class GridBuilder : MonoBehaviour
         return SliceData.Last().Last().transform.localPosition;
     }
 
+    public void ClearGrid2D()
+    {
+        // 2D
+        var count = Parent2DGridPoints.childCount;
+        for (int i = 0; i < count; i++)
+        {
+            Destroy(Parent2DGridPoints.GetChild(i).gameObject);
+        }
+
+        count = Parent2DGridLines.childCount;
+        for (int i = 0; i < count; i++)
+        {
+            Destroy(Parent2DGridLines.GetChild(i).gameObject);
+        }
+
+        SliceData = default;
+    }
+
     #endregion
 
 
@@ -390,21 +422,7 @@ public class GridBuilder : MonoBehaviour
             Destroy(Parent3DGridLines.GetChild(i).gameObject);
         }
 
-        // 2D
-        count = Parent2DGridPoints.childCount;
-        for (int i = 0; i < count; i++)
-        {
-            Destroy(Parent2DGridPoints.GetChild(i).gameObject);
-        }
-
-        count = Parent2DGridLines.childCount;
-        for (int i = 0; i < count; i++)
-        {
-            Destroy(Parent2DGridLines.GetChild(i).gameObject);
-        }
-
         GridData = default;
-        SliceData = default;
 
         MainManager.Instance.MainWindow.StatusMessage("Cleared Grid!" , MainWindow.MessageType.Info);
     }

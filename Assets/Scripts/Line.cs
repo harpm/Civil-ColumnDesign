@@ -174,7 +174,9 @@ public class Line : MonoBehaviour
     public enum ConnectionType
     {
         FixedConnection,
-        PinConnection
+        PinConnection,
+        ConsoleConnection,
+        RollerSupportConnection
     }
 
     public enum Axis
