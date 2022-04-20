@@ -497,7 +497,6 @@ public class MouseManager : MonoBehaviour
                 res = true;
         }
 
-
         return res;
     }
 
@@ -512,8 +511,6 @@ public class MouseManager : MonoBehaviour
             if (hit.collider != null && hit.collider.TryGetComponent(out point))
                 res = true;
 
-
-
         return res;
     }
 
@@ -522,6 +519,8 @@ public class MouseManager : MonoBehaviour
         _selectedLine = line;
         MainManager.Instance.InspectorWindow.SelectLine(line);
         _selectedLine.Select();
+
+        MainManager.Instance.MainWindow.StatusMessage("Steel Line Selected!", MainWindow.MessageType.Info);
     }
 
     private void DeselectLine()
@@ -529,6 +528,7 @@ public class MouseManager : MonoBehaviour
         _selectedLine.Deselect();
         MainManager.Instance.InspectorWindow.DeselectLine();
         _selectedLine = null;
+        MainManager.Instance.MainWindow.StatusMessage("Steel Line Deselected!", MainWindow.MessageType.Info);
     }
 
     public enum Command
