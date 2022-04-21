@@ -70,6 +70,12 @@ public class InspectorManager : MonoBehaviour
     [SerializeField]
     private TMP_Dropdown _yBrace;
 
+    [SerializeField]
+    private GameObject _runComponents;
+
+    [SerializeField]
+    private TMP_Dropdown _outputOptions;
+
     private Line _selectedLine;
 
     private LineType _selectedLineType;
@@ -139,6 +145,8 @@ public class InspectorManager : MonoBehaviour
             _forceUToggle.isOn = true;
             _aliveForceInp.text = line.UltimateForce.ToString();
         }
+
+        
     }
 
     private void DisplayBeamInspector(Line line)
@@ -146,6 +154,7 @@ public class InspectorManager : MonoBehaviour
         Content.SetActive(true);
         _hConnectionObj.SetActive(true);
         _lConnectionObj.SetActive(true);
+        _runComponents.SetActive(true);
 
         _title.text = _selectedLineType.ToString();
 
@@ -165,6 +174,7 @@ public class InspectorManager : MonoBehaviour
         _xBraceObj.SetActive(false);
         _yBraceObj.SetActive(false);
         _fyObj.SetActive(false);
+        _runComponents.SetActive(false);
         Content.SetActive(false);
     }
 
@@ -203,6 +213,11 @@ public class InspectorManager : MonoBehaviour
         _selectedLine.Inertia = float.Parse(_inertiaInp.text);
     }
 
+    public void Run()
+    {
+
+    }
+
     public void ForceADChanged(bool on)
     {
         _aliveForceInp.interactable = on;
@@ -223,6 +238,15 @@ public class InspectorManager : MonoBehaviour
             _aliveForceInp.interactable = false;
             _deadForceInp.interactable = false;
         }
+    }
+
+    private enum RunOption
+    {
+        IPB,
+        IPE,
+        BoxHssRectangular,
+        BoxHssSquare,
+        RoundHss
     }
 
     private enum LineType

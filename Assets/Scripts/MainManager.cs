@@ -28,6 +28,22 @@ public class MainManager : MonoBehaviour
     [SerializeField]
     public MouseManager MouseManager;
 
+    [Header("Calculations")]
+    [SerializeField]
+    public IPB IpbScript;
+
+    [SerializeField]
+    public IPE IpeScript;
+
+    [SerializeField]
+    public BoxHssRectangular HssRectangularScript;
+
+    [SerializeField]
+    public BoxHssSquer HssSquareScript;
+
+    [SerializeField]
+    public RoundHss RoundHssScript;
+
     public static MainManager Instance;
 
     void Awake()

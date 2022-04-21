@@ -86,7 +86,7 @@ public class IPB : MonoBehaviour
         _connection.Dispose();
     }
 
-    private void Evaluate(Line mainColumn)
+    public void Evaluate(Line mainColumn)
     {
         var topBeams = MainManager.Instance.MouseManager.Lines.FindAll(l =>
             (l.EndPoint == mainColumn.EndPoint || l.FirstPoint == mainColumn.EndPoint) &&
@@ -339,6 +339,7 @@ public class IPB : MonoBehaviour
                 if (fu <= Pn * Phy)
                 {
                     MainManager.Instance.MainWindow.StatusMessage(data.IPB + ": succeeded!", MainWindow.MessageType.Successful);
+                    break;
                 }
             }
 
