@@ -96,65 +96,132 @@ public class IPB : MonoBehaviour
             (l.EndPoint == mainColumn.EndPoint || l.FirstPoint == mainColumn.FirstPoint) &&
             (l._curAxis == Line.Axis.Z || l._curAxis == Line.Axis.Nz));
 
+        var topBeamsX = topBeams.FindAll(b => b._curAxis == Line.Axis.X || b._curAxis == Line.Axis.Nx);
+        var botBeamsX = botBeams.FindAll(b => b._curAxis == Line.Axis.X || b._curAxis == Line.Axis.Nx);
+        var topBeamsY = topBeams.FindAll(b => b._curAxis == Line.Axis.Y || b._curAxis == Line.Axis.Ny);
+        var botBeamsY = botBeams.FindAll(b => b._curAxis == Line.Axis.Y || b._curAxis == Line.Axis.Ny);
 
-        float Gb = 0.0f, Gt = 0.0f, K = 0.0f;
 
-        // TODO: Do this part only if the column is not supported
-        float[] topB = new float[topBeams.Count];
+        float Gbx = 0.0f, Gtx = 0.0f, Gby = 0.0f, Gty = 0.0f, Kx = 0.0f, Ky = 0.0f;
+
+
+        float[] topBX = new float[topBeamsX.Count];
+        float[] topBY = new float[topBeamsY.Count];
+        float[] botBY = new float[botBeamsY.Count];
+        float[] botBX = new float[botBeamsX.Count];
+
         for (int i = 0; i < topBeams.Count; i++)
         {
-            var beam = topBeams[i];
+            var beam = topBeamsX[i];
 
             var nearConnection = beam.FirstPoint == mainColumn.EndPoint ? beam.LowerConnection : beam.HigherConnection;
             var farConnection = beam.FirstPoint == mainColumn.EndPoint ? beam.HigherConnection : beam.LowerConnection;
 
-            if (beam.IsOnGround)
-            {
-                Gt = nearConnection == Line.ConnectionType.PinConnection ? 10.0f : 1.0f;
-                break;
-            }
+
+            if (nearConnection == Line.ConnectionType.PinConnection)
+                topBX[i] = 0.0f;
+            else if (farConnection == Line.ConnectionType.FixedConnection)
+                topBX[i] = 2.0f;
+            else if (farConnection == Line.ConnectionType.PinConnection)
+                topBX[i] = 1.5f;
+            else if (farConnection == Line.ConnectionType.RollerSupportConnection)
+                topBX[i] = 2.0f / 3.0f;
+            else if ((beam.FirstPoint == mainColumn.EndPoint ? beam.EndPoint : beam.FirstPoint).IsEmpty)
+                topBX[i] = 0.0f;
             else
-            {
-                if (nearConnection == Line.ConnectionType.PinConnection)
-                    topB[i] = 0.0f;
-                else if (farConnection == Line.ConnectionType.PinConnection)
-                    topB[i] = 1.5f;
-                else if (farConnection == Line.ConnectionType.RollerSupportConnection)
-                    topB[i] = 2.0f / 3.0f;
-                else if ((beam.FirstPoint == mainColumn.EndPoint ? beam.EndPoint : beam.FirstPoint).IsEmpty)
-                    topB[i] = 0.0f;
-                else
-                    topB[i] = 1.0f;
-            }
+                topBX[i] = 1.0f;
         }
         
-        float[] botB = new float[botBeams.Count];
         for (int i = 0; i < topBeams.Count; i++)
         {
-            var beam = topBeams[i];
+            var beam = topBeamsY[i];
 
-            var nearConnection = beam.FirstPoint == mainColumn.FirstPoint ? beam.LowerConnection : beam.HigherConnection;
-            var farConnection = beam.FirstPoint == mainColumn.FirstPoint ? beam.HigherConnection : beam.LowerConnection;
+            var nearConnection = beam.FirstPoint == mainColumn.EndPoint ? beam.LowerConnection : beam.HigherConnection;
+            var farConnection = beam.FirstPoint == mainColumn.EndPoint ? beam.HigherConnection : beam.LowerConnection;
 
-            if (beam.IsOnGround)
-            {
-                Gb = nearConnection == Line.ConnectionType.PinConnection ? 10.0f : 1.0f;
-                break;
-            }
+
+            if (nearConnection == Line.ConnectionType.PinConnection)
+                topBY[i] = 0.0f;
+            else if (farConnection == Line.ConnectionType.FixedConnection)
+                topBY[i] = 2.0f;
+            else if (farConnection == Line.ConnectionType.PinConnection)
+                topBY[i] = 1.5f;
+            else if (farConnection == Line.ConnectionType.RollerSupportConnection)
+                topBY[i] = 2.0f / 3.0f;
+            else if ((beam.FirstPoint == mainColumn.EndPoint ? beam.EndPoint : beam.FirstPoint).IsEmpty)
+                topBY[i] = 0.0f;
             else
+                topBX[i] = 1.0f;
+        }
+
+        
+        if (!mainColumn.IsOnGround)
+        {
+            for (int i = 0; i < botBeamsX.Count; i++)
             {
+                var beam = botBeamsX[i];
+
+                var nearConnection = beam.FirstPoint == mainColumn.FirstPoint ? beam.LowerConnection : beam.HigherConnection;
+                var farConnection = beam.FirstPoint == mainColumn.FirstPoint ? beam.HigherConnection : beam.LowerConnection;
+
+
                 if (nearConnection == Line.ConnectionType.PinConnection)
-                    topB[i] = 0.0f;
+                    botBX[i] = 0.0f;
+                else if (farConnection == Line.ConnectionType.FixedConnection)
+                    botBX[i] = 2.0f;
                 else if (farConnection == Line.ConnectionType.PinConnection)
-                    topB[i] = 1.5f;
+                    botBX[i] = 1.5f;
                 else if (farConnection == Line.ConnectionType.RollerSupportConnection)
-                    topB[i] = 2.0f / 3.0f;
+                    botBX[i] = 2.0f / 3.0f;
                 else if ((beam.FirstPoint == mainColumn.FirstPoint ? beam.EndPoint : beam.FirstPoint).IsEmpty)
-                    topB[i] = 0.0f;
+                    botBX[i] = 0.0f;
                 else
-                    topB[i] = 1.0f;
+                    botBX[i] = 1.0f;
+            }
+
+            
+            for (int i = 0; i < botBeamsY.Count; i++)
+            {
+                var beam = botBeamsY[i];
+
+                var nearConnection = beam.FirstPoint == mainColumn.FirstPoint ? beam.LowerConnection : beam.HigherConnection;
+                var farConnection = beam.FirstPoint == mainColumn.FirstPoint ? beam.HigherConnection : beam.LowerConnection;
+
+
+                if (nearConnection == Line.ConnectionType.PinConnection)
+                    botBY[i] = 0.0f;
+                else if (farConnection == Line.ConnectionType.FixedConnection)
+                    botBY[i] = 2.0f;
+                else if (farConnection == Line.ConnectionType.PinConnection)
+                    botBY[i] = 1.5f;
+                else if (farConnection == Line.ConnectionType.RollerSupportConnection)
+                    botBY[i] = 2.0f / 3.0f;
+                else if ((beam.FirstPoint == mainColumn.FirstPoint ? beam.EndPoint : beam.FirstPoint).IsEmpty)
+                    botBY[i] = 0.0f;
+                else
+                    botBY[i] = 1.0f;
             }
         }
+        else
+        {
+            if (!mainColumn.IsBracedX)
+            {
+                Gbx = mainColumn.SuppType == Line.SupportType.Fixed ? 1.0f : 10.0f;
+            }
+            else
+                Kx = 1.0f;
+
+            if (!mainColumn.IsBracedY)
+            {
+                Gby = mainColumn.SuppType == Line.SupportType.Fixed ? 1.0f : 10.0f;
+            }
+            else
+                Ky = 1.0f;
+
+
+        }
+
+
 
         OpenConnection();
         RequestIpbData();
@@ -162,17 +229,16 @@ public class IPB : MonoBehaviour
         IPBDataStructure data;
         while (NextRow(out data))
         {
-            if (Gt == 0.0f)
+            if (Gbx == 0 || Gby == 0)
             {
-                Gt = G(data.I, topColumns.Select(c => c.Length).ToArray(),
-                    topBeams.Select(b => b.Length).ToArray(), topB);
+                Gbx = G(data.Ix, botColumns.Select(b => b.Length).ToArray(),
+                    botBeamsX.Select(b => b.Length).ToArray(), botBX);
+
+                Gby = G(data.Iy, botColumns.Select(b => b.Length).ToArray(),
+                    botBeamsY.Select(b => b.Length).ToArray(), botBY);
             }
 
-            if (Gb == 0.0f)
-            {
-                Gb = G(data.I, botColumns.Select(c => c.Length).ToArray(),
-                    botBeams.Select(c => c.Length).ToArray(), botB);
-            }
+
         }
 
         CloseConnection();

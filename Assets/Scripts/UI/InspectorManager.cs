@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class InspectorManager : MonoBehaviour
 {
@@ -15,10 +17,16 @@ public class InspectorManager : MonoBehaviour
     private TextMeshProUGUI _length;
 
     [SerializeField]
-    private GameObject _forces;
+    private GameObject _forcesAD;
 
     [SerializeField]
-    private GameObject _inertia;
+    private GameObject _forcesU;
+
+    [SerializeField]
+    private Toggle _forceADToggle;
+
+    [SerializeField]
+    private Toggle _forceUToggle;
 
     [SerializeField]
     private GameObject _hConnectionObj;
@@ -27,10 +35,19 @@ public class InspectorManager : MonoBehaviour
     private GameObject _lConnectionObj;
 
     [SerializeField]
+    private GameObject _xBraceObj;
+
+    [SerializeField]
+    private GameObject _yBraceObj;
+
+    [SerializeField]
     private TMP_InputField _aliveForceInp;
 
     [SerializeField]
     private TMP_InputField _deadForceInp;
+
+    [SerializeField]
+    private TMP_InputField _ultimateForceInp;
 
     [SerializeField]
     private TMP_InputField _inertiaInp;
@@ -40,6 +57,12 @@ public class InspectorManager : MonoBehaviour
 
     [SerializeField]
     private TMP_Dropdown _lConnection;
+
+    [SerializeField]
+    private TMP_Dropdown _xBrace;
+
+    [SerializeField]
+    private TMP_Dropdown _yBrace;
 
     private Line _selectedLine;
 
@@ -63,13 +86,12 @@ public class InspectorManager : MonoBehaviour
         if (line._curAxis == Line.Axis.Z || line._curAxis == Line.Axis.Nz)
         {
             _selectedLineType = LineType.Column;
-            DisplayColumnInspector(line.Length, line.AliveForces, line.DeadForces);
+            DisplayColumnInspector(line);
         }
         else
         {
             _selectedLineType = LineType.Beam;
-            DisplayBeamInspector(line.Length, line.Inertia, line.HigherConnection,
-                line.LowerConnection, line.IsOnGround);
+            DisplayBeamInspector(line);
         }
 
     }
@@ -80,58 +102,60 @@ public class InspectorManager : MonoBehaviour
         DisplayOffInspector();
     }
 
-    private void DisplayColumnInspector(float length, float aliveForce, float deadForce)
+    private void DisplayColumnInspector(Line line)
     {
         Content.SetActive(true);
-        _forces.SetActive(true);
+        _forcesAD.SetActive(true);
+        _forcesU.SetActive(true);
+        if (line.IsOnGround)
+        {
+            _xBraceObj.SetActive(true);
+            _yBraceObj.SetActive(true);
+        }
 
         _title.text = _selectedLineType.ToString();
-        
 
-        _length.text = length + " m";
-        _aliveForceInp.text = aliveForce.ToString();
-        _deadForceInp.text = deadForce.ToString();
+        _length.text = line.Length + " m";
+        _inertiaInp.text = line.Inertia.ToString();
+        _xBrace.value = Convert.ToInt32(line.IsBracedX);
+        _yBrace.value = Convert.ToInt32(line.IsBracedY);
+
+        if (line.ForceAD)
+        {
+            _forceADToggle.isOn = true;
+            _aliveForceInp.text = line.AliveForces.ToString();
+            _deadForceInp.text = line.DeadForces.ToString();
+        }
+        else
+        {
+            _forceUToggle.isOn = true;
+            _aliveForceInp.text = line.UltimateForce.ToString();
+        }
     }
 
-    private void DisplayBeamInspector(float length, float inertia, Line.ConnectionType hConnType,
-        Line.ConnectionType lConnType, bool isOnGround)
+    private void DisplayBeamInspector(Line line)
     {
         Content.SetActive(true);
-        _inertia.SetActive(true);
         _hConnectionObj.SetActive(true);
         _lConnectionObj.SetActive(true);
 
         _title.text = _selectedLineType.ToString();
 
-        _length.text = length + " m";
-        _inertiaInp.text = inertia.ToString();
-        _hConnection.value = (int)hConnType;
-        _lConnection.value = (int)lConnType;
-
-        _hConnection.ClearOptions();
-        _lConnection.ClearOptions();
-
-        var options = new List<TMP_Dropdown.OptionData>();
-        options.Add(new TMP_Dropdown.OptionData("Fixed"));
-        options.Add(new TMP_Dropdown.OptionData("Pinned"));
-        
-        if (!isOnGround)
-        {
-            options.Add(new TMP_Dropdown.OptionData("Console"));
-            options.Add(new TMP_Dropdown.OptionData("Roller Support"));
-        }
-        
-        _hConnection.AddOptions(options);
-        _lConnection.AddOptions(options);
+        _length.text = line.Length + " m";
+        _inertiaInp.text = line.Inertia.ToString();
+        _hConnection.value = (int)line.HigherConnection;
+        _lConnection.value = (int)line.LowerConnection;
 
     }
 
     private void DisplayOffInspector()
     {
-        _forces.SetActive(false);
-        _inertia.SetActive(false);
+        _forcesAD.SetActive(false);
+        _forcesU.SetActive(false);
         _hConnectionObj.SetActive(false);
         _lConnectionObj.SetActive(false);
+        _xBraceObj.SetActive(false);
+        _yBraceObj.SetActive(false);
         Content.SetActive(false);
     }
 
@@ -139,14 +163,55 @@ public class InspectorManager : MonoBehaviour
     {
         if (_selectedLineType == LineType.Column)
         {
-            _selectedLine.AliveForces = float.Parse(_aliveForceInp.text);
-            _selectedLine.DeadForces = float.Parse(_deadForceInp.text);
+            if (_selectedLine.IsOnGround)
+            {
+                _selectedLine.IsBracedX = _xBrace.value != 0;
+                _selectedLine.IsBracedY = _yBrace.value != 0;
+            }
+
+            _selectedLine.ForceAD = _forceADToggle.isOn;
+
+            if (_forceADToggle.isOn)
+            {
+                _selectedLine.AliveForces = float.Parse(_aliveForceInp.text);
+                _selectedLine.DeadForces = float.Parse(_deadForceInp.text);
+                _selectedLine.UltimateForce = 0;
+            }
+            else
+            {
+                _selectedLine.UltimateForce = float.Parse(_ultimateForceInp.text);
+                _selectedLine.AliveForces = 0;
+                _selectedLine.DeadForces = 0;
+            }
         }
         else
         {
-            _selectedLine.Inertia = float.Parse(_inertiaInp.text);
             _selectedLine.HigherConnection = (Line.ConnectionType)_hConnection.value;
             _selectedLine.LowerConnection = (Line.ConnectionType)_lConnection.value;
+        }
+
+        _selectedLine.Inertia = float.Parse(_inertiaInp.text);
+    }
+
+    public void ForceADChanged(bool on)
+    {
+        _aliveForceInp.interactable = on;
+        _deadForceInp.interactable = on;
+
+        if (on)
+        {
+            _ultimateForceInp.interactable = false;
+        }
+    }
+
+    public void ForceUChanged(bool on)
+    {
+        _ultimateForceInp.interactable = on;
+
+        if (on)
+        {
+            _aliveForceInp.interactable = false;
+            _deadForceInp.interactable = false;
         }
     }
 

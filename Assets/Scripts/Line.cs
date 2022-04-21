@@ -43,6 +43,8 @@ public class Line : MonoBehaviour
 
     public float AliveForces = 0.0f;
     public float DeadForces = 0.0f;
+    public float UltimateForce = 0.0f;
+    public bool ForceAD = true;
 
     public float Inertia = 0.0f;
 
@@ -50,6 +52,13 @@ public class Line : MonoBehaviour
     public ConnectionType LowerConnection;
 
     public bool IsOnGround = false;
+
+    public SupportType SuppType = SupportType.Fixed;
+
+    public bool IsBracedX = false;
+    public bool IsBracedY = false;
+
+
 
 
     public void SetAxis()
@@ -115,7 +124,7 @@ public class Line : MonoBehaviour
         else
             _curAxis = Axis.Invalid;
 
-        if (FirstPoint.S == 1 && EndPoint.S == 1)
+        if (FirstPoint.S == 1 || EndPoint.S == 1)
             IsOnGround = true;
         else
             IsOnGround = false;
@@ -198,5 +207,11 @@ public class Line : MonoBehaviour
         Nx,
         Ny,
         Nz
+    }
+
+    public enum SupportType
+    {
+        Fixed,
+        Pin
     }
 }
