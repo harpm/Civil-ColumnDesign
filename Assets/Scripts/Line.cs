@@ -38,7 +38,7 @@ public class Line : MonoBehaviour
 
     public Axis _curAxis { get; private set; }
 
-    public float Length => 
+    public float Length =>
         (_firstPoint.Instance3D.transform.position - _endPoint.Instance3D.transform.position).magnitude;
 
     public float AliveForces = 0.0f;
@@ -58,8 +58,7 @@ public class Line : MonoBehaviour
     public bool IsBracedX = false;
     public bool IsBracedY = false;
 
-
-
+    public float Fy;
 
     public void SetAxis()
     {

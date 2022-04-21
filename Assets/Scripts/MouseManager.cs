@@ -345,7 +345,7 @@ public class MouseManager : MonoBehaviour
             {
                 if (_selectedLine != null)
                     DeselectLine();
-                else if (TryHitLine(localPose, _2DCamera, out SteelLine2D sl))
+                else if (TryHitLine(localPose2D, _2DCamera, out SteelLine2D sl))
                 {
                     SelectLine(sl.MainInstance);
                 }

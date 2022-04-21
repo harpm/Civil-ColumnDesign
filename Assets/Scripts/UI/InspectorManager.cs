@@ -41,6 +41,12 @@ public class InspectorManager : MonoBehaviour
     private GameObject _yBraceObj;
 
     [SerializeField]
+    private GameObject _fyObj;
+
+    [SerializeField]
+    private TMP_Dropdown _fyDropdown;
+
+    [SerializeField]
     private TMP_InputField _aliveForceInp;
 
     [SerializeField]
@@ -107,6 +113,8 @@ public class InspectorManager : MonoBehaviour
         Content.SetActive(true);
         _forcesAD.SetActive(true);
         _forcesU.SetActive(true);
+        _fyObj.SetActive(true);
+
         if (line.IsOnGround)
         {
             _xBraceObj.SetActive(true);
@@ -156,6 +164,7 @@ public class InspectorManager : MonoBehaviour
         _lConnectionObj.SetActive(false);
         _xBraceObj.SetActive(false);
         _yBraceObj.SetActive(false);
+        _fyObj.SetActive(false);
         Content.SetActive(false);
     }
 
@@ -170,6 +179,7 @@ public class InspectorManager : MonoBehaviour
             }
 
             _selectedLine.ForceAD = _forceADToggle.isOn;
+            _selectedLine.Fy = _fyDropdown.value == 0 ? 2400.0f : 3700.0f;
 
             if (_forceADToggle.isOn)
             {
