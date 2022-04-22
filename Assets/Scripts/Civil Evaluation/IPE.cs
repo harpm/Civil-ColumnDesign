@@ -29,7 +29,7 @@ public class IPE : MonoBehaviour
         _connection = new SqliteConnection(conn);
     }
 
-    private void RequestIpbData()
+    private void RequestIpeData()
     {
         _dbCmd = _connection.CreateCommand();
         _dbCmd.CommandText = "SELECT * from \"IPE\"";

@@ -36145,10 +36145,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1721091279}
   - component: {fileID: 1721091278}
-  - component: {fileID: 1721091277}
-  - component: {fileID: 1721091276}
-  - component: {fileID: 1721091275}
-  - component: {fileID: 1721091274}
   m_Layer: 0
   m_Name: Calculations
   m_TagString: Untagged
@@ -36156,54 +36152,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1721091274
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1721091273}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e11e62f7eb8ea774ab40ee2bb672b1f1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1721091275
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1721091273}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45690b6a44c1aa344ae075fdd23f06f6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1721091276
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1721091273}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d7a4f6f59b9eea4f8f1f8b38056347a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1721091277
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1721091273}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cffde718f07e70f449adc136afe31ce1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1721091278
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -41748,6 +41696,11 @@ MonoBehaviour:
   CameraManager: {fileID: 1204730953}
   GridBuilder: {fileID: 1134716596}
   MouseManager: {fileID: 642969087}
+  IpbScript: {fileID: 1721091278}
+  IpeScript: {fileID: 0}
+  HssRectangularScript: {fileID: 0}
+  HssSquareScript: {fileID: 0}
+  RoundHssScript: {fileID: 0}
 --- !u!4 &2005165220
 Transform:
   m_ObjectHideFlags: 0
