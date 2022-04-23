@@ -202,7 +202,7 @@ public class InspectorManager : MonoBehaviour
 
             if (_selectedLine.IsOnGround)
             {
-                _selectedLine.SuppType = (Line.SupportType) _columnSupport.value;
+                _selectedLine.SuppType = (Line.SupportType)_columnSupport.value;
             }
 
             _selectedLine.ForceAD = _forceADToggle.isOn;
@@ -287,6 +287,11 @@ public class InspectorManager : MonoBehaviour
                     break;
 
                 }
+            case RunOption.EvaluateDoubleIpeParallel:
+                {
+                    MainManager.Instance.CoreCalculator.EvaluateDoubleIpeParallel(_selectedLine);
+                    break;
+                }
         }
     }
 
@@ -322,7 +327,8 @@ public class InspectorManager : MonoBehaviour
         DoubleIPECross,
         BoxHSSRectangular,
         BoxHSSSquare,
-        RoundHSS
+        RoundHSS,
+        EvaluateDoubleIpeParallel
     }
 
     private enum LineType

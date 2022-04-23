@@ -55,7 +55,7 @@ public class GridBuilder : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        GenerateGrid(3, 3, 3, new float[] { 10, 10, 10 }, new float[] { 10, 10, 10 }, new float[] { 8, 8, 8 });
+        GenerateGrid(3, 3, 3, new float[] { 5, 5, 5 }, new float[] { 6, 6, 6 }, new float[] { 5, 4, 4 });
     }
 
     // Update is called once per frame
@@ -205,15 +205,15 @@ public class GridBuilder : MonoBehaviour
                 if (i == 0)
                 {
                     var label = Instantiate(_labelFramePrefab, Parent2DGridPoints);
-                    label.transform.localPosition = new Vector3(point.transform.localPosition.x - 3, point.transform.localPosition.y);
+                    label.transform.localPosition = new Vector3(point.transform.localPosition.x - 2.5f, point.transform.localPosition.y);
                     label.text.text = "S" + (j + 1);
 
                     if (j > 0)
                     {
                         var spacing = Instantiate(_spacingLabelPrefab, Parent2DGridPoints);
-                        spacing.transform.localPosition = new Vector3(point.transform.localPosition.x - 1.5f,
+                        spacing.transform.localPosition = new Vector3(point.transform.localPosition.x - 1.25f,
                             point.transform.localPosition.y - point.SpacingY / 2);
-                        spacing.text.text = (point.SpacingY * 10.0f) + " cm";
+                        spacing.text.text = (point.SpacingY * 100.0f) + " cm";
                     }
                 }
 
@@ -228,7 +228,7 @@ public class GridBuilder : MonoBehaviour
                         var spacing = Instantiate(_spacingLabelPrefab, Parent2DGridPoints);
                         spacing.transform.localPosition = new Vector3(point.transform.localPosition.x - point.SpacingX / 2,
                             point.transform.localPosition.y + 2);
-                        spacing.text.text = (point.SpacingX * 10.0f) + " cm";
+                        spacing.text.text = (point.SpacingX * 100.0f) + " cm";
                     }
                 }
 
@@ -274,15 +274,15 @@ public class GridBuilder : MonoBehaviour
                 if (i == 0)
                 {
                     var label = Instantiate(_labelFramePrefab, Parent2DGridPoints);
-                    label.transform.localPosition = new Vector3(point.transform.localPosition.x - 3, point.transform.localPosition.y);
+                    label.transform.localPosition = new Vector3(point.transform.localPosition.x - 2.5f, point.transform.localPosition.y);
                     label.text.text = "S" + (j + 1);
 
                     if (j > 0)
                     {
                         var spacing = Instantiate(_spacingLabelPrefab, Parent2DGridPoints);
-                        spacing.transform.localPosition = new Vector3(point.transform.localPosition.x - 1.5f,
+                        spacing.transform.localPosition = new Vector3(point.transform.localPosition.x - 1.25f,
                             point.transform.localPosition.y - point.SpacingY / 2);
-                        spacing.text.text = (point.SpacingY * 10.0f) + " cm";
+                        spacing.text.text = (point.SpacingY * 100.0f) + " cm";
                     }
                 }
 
@@ -297,7 +297,7 @@ public class GridBuilder : MonoBehaviour
                         var spacing = Instantiate(_spacingLabelPrefab, Parent2DGridPoints);
                         spacing.transform.localPosition = new Vector3(point.transform.localPosition.x - point.SpacingX / 2,
                             point.transform.localPosition.y + 2);
-                        spacing.text.text = (point.SpacingX * 10.0f) + " cm";
+                        spacing.text.text = (point.SpacingX * 100.0f) + " cm";
                     }
                 }
             }
@@ -343,15 +343,15 @@ public class GridBuilder : MonoBehaviour
                 if (i == 0)
                 {
                     var label = Instantiate(_labelFramePrefab, Parent2DGridPoints);
-                    label.transform.localPosition = new Vector3(point.transform.localPosition.x - 3, point.transform.localPosition.y);
+                    label.transform.localPosition = new Vector3(point.transform.localPosition.x - 2.5f, point.transform.localPosition.y);
                     label.text.text = "Y" + (j + 1);
 
                     if (j > 0)
                     {
                         var spacing = Instantiate(_spacingLabelPrefab, Parent2DGridPoints);
-                        spacing.transform.localPosition = new Vector3(point.transform.localPosition.x - 1.5f,
+                        spacing.transform.localPosition = new Vector3(point.transform.localPosition.x - 1.25f,
                             point.transform.localPosition.y - point.SpacingY / 2);
-                        spacing.text.text = (point.SpacingY * 10.0f) + " cm";
+                        spacing.text.text = (point.SpacingY * 100.0f) + " cm";
                     }
                 }
 
@@ -366,7 +366,7 @@ public class GridBuilder : MonoBehaviour
                         var spacing = Instantiate(_spacingLabelPrefab, Parent2DGridPoints);
                         spacing.transform.localPosition = new Vector3(point.transform.localPosition.x - point.SpacingX / 2,
                             point.transform.localPosition.y + 2);
-                        spacing.text.text = (point.SpacingX * 10.0f) + " cm";
+                        spacing.text.text = (point.SpacingX * 100.0f) + " cm";
                     }
                 }
             }

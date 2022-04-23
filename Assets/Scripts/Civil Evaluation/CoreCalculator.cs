@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using Mono.Data.Sqlite;
 using TMPro;
 using UnityEngine;
@@ -826,6 +827,84 @@ public class CoreCalculator : MonoBehaviour
                                                            " cm \nD/C: " + dpc);
                 break;
             }
+        }
+
+        CloseConnection();
+    }
+
+    public void EvaluateDoubleIpeParallel(Line mainColumn)
+    {
+        OpenConnection();
+        RequestIpeData();
+
+        IPEDataStructure data;
+        while (NextRow(out data))
+        {
+            var Ag = 2 * data.Ag;
+            var Ix = 2 * data.Ix;
+            var Rx = data.Rx;
+            var Iy = 2 * data.Ix;
+            var Ry = data.Rx;
+            var Cw = 2 * (Mathf.Pow(data.Bf, 3) * data.Tf * Mathf.Pow(data.Df, 2) / 24) +
+                     (data.Tw * Mathf.Pow(data.Df, 3) * Mathf.Pow(data.A, 2) / 24);
+            var J = 2 * data.J;
+
+            K(mainColumn, out float Kx, out float Ky, Ix, Iy);
+
+            var rMin = Mathf.Min(data.Rx, data.Ry);
+
+            var lambdaX = Mathf.Max(Kx, Ky) * mainColumn.Length / Mathf.Max(Rx, Ry);
+            var lambdaY = Mathf.Min(Kx, Ky) * mainColumn.Length / Mathf.Min(Rx, Ry);
+
+            var a = Mathf.Round((3.0f / 4.0f) * Mathf.Max(lambdaX, lambdaY) * rMin); 
+
+            var lambdaM1 = Mathf.Sqrt(Mathf.Pow(lambdaY, 2) + Mathf.Pow(a / rMin, 2));
+            var lambdaM2 = a / rMin <= 40
+                ? lambdaY : Mathf.Sqrt(Mathf.Pow(lambdaY, 2) + Mathf.Pow(0.86f * a / rMin, 2));
+
+
+            var mLambda = Mathf.Max(lambdaM1, Math.Max(lambdaM2, lambdaX));
+
+            if (mLambda > 200.0f)
+                mLambda = 200.0f;
+
+            var fcr1 = Fcr(mLambda, Ix, Iy, Cw, mainColumn.Length, J, mainColumn.Fy);
+            var Pn = 2 * fcr1 * Ag;
+            float fu = mainColumn.ForceAD
+                ? Mathf.Max(1.4f * mainColumn.DeadForces,
+                    1.2f * mainColumn.DeadForces + 1.6f * mainColumn.AliveForces)
+                : mainColumn.UltimateForce;
+
+            if (fu > Phy * Pn)
+                continue;
+
+            if (a / rMin > 3.0f / 4.0f * mLambda)
+                continue;
+
+            
+
+
+
+            var Vux = 0.02f * fu;
+            var Vb = (Vux * a) / (2.0f * data.A);
+            var Mb = Vux * a / 4.0f;
+            var bs = Mathf.Round((data.A + 1.0f) / 2.0f);
+            if (bs >= data.A)
+                bs = Mathf.Round(data.A / 2.0f);
+
+            var maxTs = Mathf.Max(Vb / (0.6f * mainColumn.Fy * bs), (4 * Mb) / Mathf.Pow(0.9f * mainColumn.Fy * bs, 2));
+
+            var ts = tps.First(f => f >= maxTs);
+
+            if (fu <= Pn * Phy)
+            {
+                var dpc = fu / (Phy * Pn);
+                MainManager.Instance.MainWindow.ShowOutput("Use: 2 IPE " + data.IPE + " @ " + Mathf.Round(data.A)
+                                                           + " + 2 PL " + Mathf.Round(data.A) + " * " + bs + " * " + ts + " cm @" + "\na = " + a + " cm"+ "\n\n"
+                                                           + "D / C: " + dpc);
+                break;
+            }
+
         }
 
         CloseConnection();
