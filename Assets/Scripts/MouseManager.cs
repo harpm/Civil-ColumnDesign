@@ -604,11 +604,11 @@ public class MouseManager : MonoBehaviour
         Destroy(line.Instance3D.gameObject);
         Destroy(line.gameObject);
 
-        if (!Lines.Exists(l => l.FirstPoint == line.FirstPoint || l.EndPoint == line.FirstPoint))
-            line.FirstPoint.IsEmpty = true;
-
-        if (!Lines.Exists(l => l.FirstPoint == line.EndPoint || l.EndPoint == line.EndPoint))
-            line.EndPoint.IsEmpty = true;
+        if (!Lines.Exists(l => (l.FirstPoint == line.EndPoint || l.EndPoint == line.EndPoint) &&
+                               (l._curAxis == Line.Axis.Nz || l._curAxis == Line.Axis.Z)))
+        {
+            line.EndPoint.HasColumn = false;
+        }
     }
 
     public void ClearSteelLines()

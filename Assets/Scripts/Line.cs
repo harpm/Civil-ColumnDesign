@@ -67,6 +67,7 @@ public class Line : MonoBehaviour
             if (EndPoint.X == FirstPoint.X && EndPoint.Y == FirstPoint.Y && EndPoint.S != FirstPoint.S)
             {
                 _curAxis = EndPoint.S > FirstPoint.S ? Axis.Z : Axis.Nz;
+                EndPoint.HasColumn = true;
 
                 if (_firstPoint.S > _endPoint.S)
                 {
@@ -85,7 +86,7 @@ public class Line : MonoBehaviour
             else if (EndPoint.X == FirstPoint.X && EndPoint.Y != FirstPoint.Y && EndPoint.S == FirstPoint.S)
             {
                 _curAxis = EndPoint.Y > FirstPoint.Y ? Axis.Y : Axis.Ny;
-
+                
                 if (_firstPoint.Y > _endPoint.Y)
                 {
                     var temp = _firstPoint;
@@ -103,7 +104,7 @@ public class Line : MonoBehaviour
             else if (EndPoint.X != FirstPoint.X && EndPoint.Y == FirstPoint.Y && EndPoint.S == FirstPoint.S)
             {
                 _curAxis = EndPoint.X > FirstPoint.X ? Axis.X : Axis.Nx;
-
+                
                 if (_firstPoint.X > _endPoint.X)
                 {
                     var temp = _firstPoint;
@@ -140,8 +141,9 @@ public class Line : MonoBehaviour
         Instance3D.MainInstance = this;
         Instance3D.AddCollider();
 
-        FirstPoint.IsEmpty = false;
-        EndPoint.IsEmpty = false;
+        if (_curAxis == Axis.Z || _curAxis == Axis.Nz)
+        {
+        }
     }
 
     public void Select()
@@ -179,9 +181,9 @@ public class Line : MonoBehaviour
     {
 
         if (e.X == f.X && e.Y == f.Y && e.S != f.S)
-            return e.Y > f.Y ? Axis.Y : Axis.Ny;
-        else if (e.X == f.X && e.Y != f.Y && e.S == f.S)
             return e.S > f.S ? Axis.Z : Axis.Nz;
+        else if (e.X == f.X && e.Y != f.Y && e.S == f.S)
+            return e.Y > f.Y ? Axis.Y : Axis.Ny;
         else if (e.X != f.X && e.Y == f.Y && e.S == f.S)
             return e.X > f.X ? Axis.X : Axis.Nx;
         else

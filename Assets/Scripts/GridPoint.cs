@@ -46,5 +46,5 @@ public class GridPoint
         SpaceS = spaceS;
     }
 
-    public bool IsEmpty = true;
+    public bool HasColumn = false;
 }

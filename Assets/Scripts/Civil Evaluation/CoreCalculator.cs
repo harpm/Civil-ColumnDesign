@@ -236,44 +236,16 @@ public class CoreCalculator : MonoBehaviour
             if (lambda > 200.0f)
                 lambda = 200.0f;
 
-            var feD = Mathf.Pow(Mathf.PI, 2) * E / Mathf.Pow(lambda, 2);
 
-            var g = E / (2 * (1 + V));
-
-            var feG = (Mathf.Pow(Mathf.PI, 2) * E * data.Cw / Mathf.Pow(mainColumn.Length, 2) + g * data.J) * (1.0f / (data.Iy + data.Ix));
-
-            float Fe;
-
-            if (feD > feG)
-            {
-                Fe = feD;
-                lastState = FeState.Declined;
-            }
-            else
-            {
-                Fe = feG;
-                lastState = FeState.Rotational;
-            }
-
-            float Fcr;
-
-            if (mainColumn.Fy / Fe <= 2.25f)
-            {
-                Fcr = Mathf.Pow(0.658f, mainColumn.Fy / Fe) * mainColumn.Fy;
-            }
-            else
-            {
-                Fcr = 0.877f * Fe;
-            }
 
             float fu = mainColumn.ForceAD
                 ? Mathf.Max(1.4f * mainColumn.DeadForces,
                     1.2f * mainColumn.DeadForces + 1.6f * mainColumn.AliveForces)
                 : mainColumn.UltimateForce;
-
+            var Fcr = CoreCalculator.Fcr(lambda, data.Ix, data.Iy, data.Cw, mainColumn.Length, data.J, mainColumn.Fy);
             var Pn = Fcr * data.Ag;
 
-            if (fu <= Pn * Phy) // D / C = pu / phy * pn
+            if (fu <= Pn * Phy)
             {
                 var Dpc = fu / (Pn * Phy);
                 MainManager.Instance.MainWindow.ShowOutput("Use: IPB " + data.IPB + "\nD / C : " + Dpc);
@@ -321,8 +293,8 @@ public class CoreCalculator : MonoBehaviour
                 lambda = 200.0f;
 
             var feD = Mathf.Pow(Mathf.PI, 2) * E / Mathf.Pow(lambda, 2);
-
-            var feG = (Mathf.Pow(Mathf.PI, 2) * E * Cw / mainColumn.Length + (E / 2 * (1 + V)) * J)
+            var g = E / (2 * (1 + V));
+            var feG = (Mathf.Pow(Mathf.PI, 2) * E * Cw / mainColumn.Length + g * J)
                       * (1.0f / Iy + Ix);
 
             float Fe;
@@ -359,8 +331,8 @@ public class CoreCalculator : MonoBehaviour
             if (fu <= Pn * Phy)
             {
                 var dpc = fu / Phy * Pn;
-                MainManager.Instance.MainWindow.StatusMessage(data.IPE + ": succeeded!",
-                    MainWindow.MessageType.Successful);
+                MainManager.Instance.MainWindow.ShowOutput("Use: IPE " + data.IPE + " 2 PL " + 
+                                                           Mathf.RoundToInt(data.A) + " * " + tp + "\n" + "D / C: " + dpc);
                 break;
             }
         }
@@ -856,11 +828,13 @@ public class CoreCalculator : MonoBehaviour
     }
 
 
-    private static float Fcr(float lamda, float Ix, float Iy, float cw, float length, float j, float Fy)
+    private static float Fcr(float lambda, float Ix, float Iy, float cw, float length, float j, float Fy)
     {
-        var feD = Mathf.Pow(Mathf.PI, 2) * E / Mathf.Pow(lamda, 2);
+        var feD = Mathf.Pow(Mathf.PI, 2) * E / Mathf.Pow(lambda, 2);
 
-        var feG = Mathf.Pow(Mathf.PI, 2) * E * cw / length + E / 2 * (1 + V) * j * (1.0f / Iy + Ix);
+        var g = E / (2 * (1 + V));
+
+        var feG = (Mathf.Pow(Mathf.PI, 2) * E * cw / Mathf.Pow(length, 2) + g * j) * (1.0f / (Iy + Ix));
 
         float Fe;
 
@@ -944,7 +918,7 @@ public class CoreCalculator : MonoBehaviour
                     var nearConnection = beam.FirstPoint == mainColumn.FirstPoint ? beam.LowerConnection : beam.HigherConnection;
                     var farConnection = beam.FirstPoint == mainColumn.FirstPoint ? beam.HigherConnection : beam.LowerConnection;
 
-                    if ((beam.FirstPoint == mainColumn.FirstPoint ? beam.EndPoint : beam.FirstPoint).IsEmpty)
+                    if (!(beam.FirstPoint == mainColumn.FirstPoint ? beam.EndPoint : beam.FirstPoint).HasColumn)
                         botBX[i] = 0.0f;
                     else if (nearConnection == Line.ConnectionType.PinConnection)
                         botBX[i] = 0.0f;
@@ -967,7 +941,7 @@ public class CoreCalculator : MonoBehaviour
                     var nearConnection = beam.FirstPoint == mainColumn.EndPoint ? beam.LowerConnection : beam.HigherConnection;
                     var farConnection = beam.FirstPoint == mainColumn.EndPoint ? beam.HigherConnection : beam.LowerConnection;
 
-                    if ((beam.FirstPoint == mainColumn.EndPoint ? beam.EndPoint : beam.FirstPoint).IsEmpty)
+                    if (!(beam.FirstPoint == mainColumn.EndPoint ? beam.EndPoint : beam.FirstPoint).HasColumn)
                         topBX[i] = 0.0f;
                     else if (nearConnection == Line.ConnectionType.PinConnection)
                         topBX[i] = 0.0f;
@@ -1006,7 +980,7 @@ public class CoreCalculator : MonoBehaviour
                     var farConnection = beam.FirstPoint == mainColumn.FirstPoint ? beam.HigherConnection : beam.LowerConnection;
 
 
-                    if ((beam.FirstPoint == mainColumn.FirstPoint ? beam.EndPoint : beam.FirstPoint).IsEmpty)
+                    if (!(beam.FirstPoint == mainColumn.FirstPoint ? beam.EndPoint : beam.FirstPoint).HasColumn)
                         botBY[i] = 0.0f;
                     else if (nearConnection == Line.ConnectionType.PinConnection)
                         botBY[i] = 0.0f;
@@ -1029,7 +1003,7 @@ public class CoreCalculator : MonoBehaviour
                     var nearConnection = beam.FirstPoint == mainColumn.EndPoint ? beam.LowerConnection : beam.HigherConnection;
                     var farConnection = beam.FirstPoint == mainColumn.EndPoint ? beam.HigherConnection : beam.LowerConnection;
 
-                    if ((beam.FirstPoint == mainColumn.EndPoint ? beam.EndPoint : beam.FirstPoint).IsEmpty)
+                    if (!(beam.FirstPoint == mainColumn.EndPoint ? beam.EndPoint : beam.FirstPoint).HasColumn)
                         topBY[i] = 0.0f;
                     else if (nearConnection == Line.ConnectionType.PinConnection)
                         topBY[i] = 0.0f;
@@ -1062,7 +1036,7 @@ public class CoreCalculator : MonoBehaviour
                     var farConnection = beam.FirstPoint == mainColumn.EndPoint ? beam.HigherConnection : beam.LowerConnection;
 
 
-                    if ((beam.FirstPoint == mainColumn.EndPoint ? beam.EndPoint : beam.FirstPoint).IsEmpty)
+                    if (!(beam.FirstPoint == mainColumn.EndPoint ? beam.EndPoint : beam.FirstPoint).HasColumn)
                         topBX[i] = 0.0f;
                     else if (nearConnection == Line.ConnectionType.PinConnection)
                         topBX[i] = 0.0f;
@@ -1101,7 +1075,7 @@ public class CoreCalculator : MonoBehaviour
                     var farConnection = beam.FirstPoint == mainColumn.EndPoint ? beam.HigherConnection : beam.LowerConnection;
 
 
-                    if ((beam.FirstPoint == mainColumn.EndPoint ? beam.EndPoint : beam.FirstPoint).IsEmpty)
+                    if (!(beam.FirstPoint == mainColumn.EndPoint ? beam.EndPoint : beam.FirstPoint).HasColumn)
                         topBY[i] = 0.0f;
                     else if (nearConnection == Line.ConnectionType.PinConnection)
                         topBY[i] = 0.0f;
