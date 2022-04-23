@@ -29,7 +29,7 @@ public class RoundHss : MonoBehaviour
         _connection = new SqliteConnection(conn);
     }
 
-    private void RequestIpbData()
+    private void RequestRoundHssData()
     {
         _dbCmd = _connection.CreateCommand();
         _dbCmd.CommandText = "SELECT * from \"Round Hss\"";

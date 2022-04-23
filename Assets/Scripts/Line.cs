@@ -67,7 +67,7 @@ public class Line : MonoBehaviour
             if (EndPoint.X == FirstPoint.X && EndPoint.Y == FirstPoint.Y && EndPoint.S != FirstPoint.S)
             {
                 _curAxis = EndPoint.S > FirstPoint.S ? Axis.Z : Axis.Nz;
-                EndPoint.HasColumn = true;
+                
 
                 if (_firstPoint.S > _endPoint.S)
                 {
@@ -82,6 +82,7 @@ public class Line : MonoBehaviour
 
                     RedrawLines();
                 }
+                EndPoint.HasColumn = true;
             }
             else if (EndPoint.X == FirstPoint.X && EndPoint.Y != FirstPoint.Y && EndPoint.S == FirstPoint.S)
             {

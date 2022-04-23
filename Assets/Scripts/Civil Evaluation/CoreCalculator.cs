@@ -56,7 +56,21 @@ public class CoreCalculator : MonoBehaviour
     private void RequestHssRectData()
     {
         _dbCmd = _connection.CreateCommand();
-        _dbCmd.CommandText = "SELECT * from \"Box HSS Rectangular\"";
+        _dbCmd.CommandText = "SELECT * from \"Box HSS Rectanglular\"";
+        _reader = _dbCmd.ExecuteReader();
+    }
+
+    private void RequestHssSquareData()
+    {
+        _dbCmd = _connection.CreateCommand();
+        _dbCmd.CommandText = "SELECT * from \"Box HSS Square\"";
+        _reader = _dbCmd.ExecuteReader();
+    }
+
+    private void RequestRoundHssData()
+    {
+        _dbCmd = _connection.CreateCommand();
+        _dbCmd.CommandText = "SELECT * from \"Round Hss\"";
         _reader = _dbCmd.ExecuteReader();
     }
 
@@ -136,11 +150,11 @@ public class CoreCalculator : MonoBehaviour
             data = new BoxHssRectangularDataStructure()
             {
                 Id = _reader.GetInt32(0),
-                BoxHss = _reader.GetInt32(1).ToString(),
+                BoxHss = _reader.GetString(1),
                 Ag = _reader.GetFloat(2),
                 Ix = _reader.GetFloat(3),
-                Iy = _reader.GetFloat(4),
-                Rx = _reader.GetFloat(5),
+                Iy = _reader.GetFloat(5),
+                Rx = _reader.GetFloat(4),
                 Ry = _reader.GetFloat(6),
                 B = _reader.GetFloat(7) / 10.0f,
                 H = _reader.GetFloat(8) / 10.0f,
@@ -163,7 +177,7 @@ public class CoreCalculator : MonoBehaviour
             data = new RoundHssDataStructure()
             {
                 Id = _reader.GetInt32(0),
-                RoundHss = _reader.GetInt32(1).ToString(),
+                RoundHss = _reader.GetString(1),
                 Ag = _reader.GetFloat(2),
                 I = _reader.GetFloat(3),
                 R = _reader.GetFloat(4),
@@ -187,7 +201,7 @@ public class CoreCalculator : MonoBehaviour
             data = new BoxHssSquareDataStructure()
             {
                 Id = _reader.GetInt32(0),
-                BoxHss = _reader.GetInt32(1).ToString(),
+                BoxHss = _reader.GetString(1),
                 Ag = _reader.GetFloat(2),
                 I = _reader.GetFloat(3),
                 R = _reader.GetFloat(4),
@@ -199,13 +213,6 @@ public class CoreCalculator : MonoBehaviour
         }
 
         return res;
-    }
-
-    private void RequestHssSquareData()
-    {
-        _dbCmd = _connection.CreateCommand();
-        _dbCmd.CommandText = "SELECT * from \"Box HSS Square\"";
-        _reader = _dbCmd.ExecuteReader();
     }
 
     private void CloseConnection()
@@ -270,18 +277,17 @@ public class CoreCalculator : MonoBehaviour
         IPEDataStructure data;
         while (NextRow(out data))
         {
-            float tp = ChooseTb(data.Tf);
+            float tp = ChooseTb(data.Tf * 10.0f) / 10.0f;
             var Ag = 2 * (data.Ag + data.A * tp);
             var Ix = 2 * data.Ix + Mathf.Pow(tp, 3) * data.A / 6 +
                      2 * data.A * tp * Mathf.Pow((data.H / 2) + (tp / 2), 2);
             var Rx = Mathf.Sqrt(Ix / Ag);
             var Iy = 2 * data.Iy + 2 * data.Ag * Mathf.Pow(data.A, 2) / 4 + Mathf.Pow(data.A, 3) * tp / 6;
             var Ry = Mathf.Sqrt(Iy / Ag);
-            var Cw = 2 * Mathf.Pow(data.Bf, 3) * data.Tf * Mathf.Pow(data.Df, 2) / 24 +
-                     data.Tw * Mathf.Pow(data.Hw, 3) * Mathf.Pow(data.A, 2) / 24 +
-                     (tp * Mathf.Pow(data.A, 3) / 12) * (Mathf.Pow(tp + data.Tf + data.Df, 2) / 2);
-            var J = 2.0f / 3.0f * (data.A * Mathf.Pow(tp, 3) * 2 * data.Bf * Mathf.Pow(data.Tf, 3) * data.Tw *
-                                   Mathf.Pow(data.Df, 3));
+            var Cw = ((Mathf.Pow(data.Bf, 3) * data.Tf * Mathf.Pow(data.Df, 2)) / 12) +
+                     (data.Tw * Mathf.Pow(data.Hw, 3) * Mathf.Pow(data.A, 2) / 24) +
+                     ((tp * Mathf.Pow(data.A, 3) / 12) * Mathf.Pow(tp + data.Tf + data.Df, 2) / 2);
+            var J = 2.0f * data.J + (2.0f / 3.0f) * data.A * Mathf.Pow(tp, 3);
 
             K(mainColumn, out float Kx, out float Ky, Ix, Iy);
 
@@ -294,8 +300,7 @@ public class CoreCalculator : MonoBehaviour
 
             var feD = Mathf.Pow(Mathf.PI, 2) * E / Mathf.Pow(lambda, 2);
             var g = E / (2 * (1 + V));
-            var feG = (Mathf.Pow(Mathf.PI, 2) * E * Cw / mainColumn.Length + g * J)
-                      * (1.0f / Iy + Ix);
+            var feG = (Mathf.Pow(Mathf.PI, 2) * E * Cw / Mathf.Pow(mainColumn.Length, 2) + g * J) * (1.0f / (Iy + Ix));
 
             float Fe;
 
@@ -330,9 +335,9 @@ public class CoreCalculator : MonoBehaviour
 
             if (fu <= Pn * Phy)
             {
-                var dpc = fu / Phy * Pn;
-                MainManager.Instance.MainWindow.ShowOutput("Use: IPE " + data.IPE + " 2 PL " + 
-                                                           Mathf.RoundToInt(data.A) + " * " + tp + "\n" + "D / C: " + dpc);
+                var dpc = fu / (Phy * Pn);
+                MainManager.Instance.MainWindow.ShowOutput("Use: 2 IPE " + data.IPE + " @ " + Mathf.RoundToInt(data.A) +
+                                                           " + 2 PL " + " * " + tp + "\n" + "D / C: " + dpc);
                 break;
             }
         }
@@ -418,9 +423,10 @@ public class CoreCalculator : MonoBehaviour
 
             if (fu <= Pn * Phy)
             {
-                var dpc = fu / Phy * Pn;
-                MainManager.Instance.MainWindow.StatusMessage(data.IPE + ": succeeded!",
-                    MainWindow.MessageType.Successful);
+                var dpc = fu / (Phy * Pn);
+                MainManager.Instance.MainWindow.ShowOutput("Use: 2 IPE " + data.IPE + " @ " + Mathf.RoundToInt(data.A)
+                                                           + " + 2 PL " + bs + " * " + tb + "\nAlpha: " + alpha + "\n" 
+                                                           + "D / C: " + dpc);
                 break;
             }
 
@@ -480,7 +486,7 @@ public class CoreCalculator : MonoBehaviour
                 continue;
 
             var S = data.A / Mathf.Sin(alpha);
-            var tb = ChooseTb(0.7f * S * Mathf.Sqrt(12) / 200);
+            var tb = ChooseTb(0.7f * S * Mathf.Sqrt(12) / 200) / 10.0f;
             var rb = tb * Mathf.Sqrt(1.0f / 12.0f);
             var lambda = 0.7f * S / rb;
 
@@ -508,9 +514,10 @@ public class CoreCalculator : MonoBehaviour
 
             if (fu <= Pn * Phy)
             {
-                var dpc = fu / Phy * Pn;
-                MainManager.Instance.MainWindow.StatusMessage(data.IPE + ": succeeded!",
-                    MainWindow.MessageType.Successful);
+                var dpc = fu / (Phy * Pn);
+                MainManager.Instance.MainWindow.ShowOutput("Use: 2 IPE " + data.IPE + " @ " + Mathf.RoundToInt(data.A)
+                                                           + " + 2 PL " + bs + " * " + tb + "\nAlpha: " + alpha + "\n"
+                                                           + "D / C: " + dpc);
                 break;
             }
 
@@ -565,9 +572,8 @@ public class CoreCalculator : MonoBehaviour
 
             if (fu <= Pn * Phy)
             {
-                var dpc = fu / Phy * Pn;
-                MainManager.Instance.MainWindow.StatusMessage(data.BoxHss + ": succeeded!",
-                    MainWindow.MessageType.Successful);
+                var dpc = fu / (Phy * Pn);
+                MainManager.Instance.MainWindow.ShowOutput("Use: Box HSS Rect " + data.BoxHss + " t = " + data.T + "cm" + "\nD / C: " + dpc);
                 break;
             }
         }
@@ -580,7 +586,7 @@ public class CoreCalculator : MonoBehaviour
         var lambdaR = 1.4f * Mathf.Sqrt(E / mainColumn.Fy);
 
         OpenConnection();
-        RequestHssRectData();
+        RequestHssSquareData();
 
         BoxHssSquareDataStructure data;
         while (NextRow(out data))
@@ -621,9 +627,8 @@ public class CoreCalculator : MonoBehaviour
 
             if (fu <= Pn * Phy)
             {
-                var dpc = fu / Phy * Pn;
-                MainManager.Instance.MainWindow.StatusMessage(data.BoxHss + ": succeeded!",
-                    MainWindow.MessageType.Successful);
+                var dpc = fu / (Phy * Pn);
+                MainManager.Instance.MainWindow.ShowOutput("Use: Box HSS Square " + data.BoxHss + " t = " + data.T + " cm\nD/C: " + dpc);
                 break;
             }
         }
@@ -634,7 +639,7 @@ public class CoreCalculator : MonoBehaviour
     public void EvaluateRoundHss(Line mainColumn)
     {
         OpenConnection();
-        RequestHssRectData();
+        RequestRoundHssData();
 
         RoundHssDataStructure data;
         while (NextRow(out data))
@@ -673,9 +678,8 @@ public class CoreCalculator : MonoBehaviour
 
             if (fu <= Pn * Phy)
             {
-                var dpc = fu / Phy * Pn;
-                MainManager.Instance.MainWindow.StatusMessage(data.RoundHss + ": succeeded!",
-                    MainWindow.MessageType.Successful);
+                var dpc = fu / (Phy * Pn);
+                MainManager.Instance.MainWindow.ShowOutput("Use: Round HSS " + data.RoundHss + " D = " + data.D + " cm, t = " + data.T + "\nD/C: " + dpc);
                 break;
             }
         }
@@ -691,14 +695,13 @@ public class CoreCalculator : MonoBehaviour
         IPBDataStructure data;
         while (NextRow(out data))
         {
-            float tp = ChooseTb(data.Tf);
+            float tp = ChooseTb(data.Tf * 10.0f) / 10.0f;
             var Ag = data.Ag + 2 * data.Bf * tp;
             var Ix = data.Ix + Mathf.Pow(tp, 3) * data.Bf / 6 + 2 * data.Bf * tp * Mathf.Pow((data.H / 2) + (tp / 2), 2);
             var Rx = Mathf.Sqrt(Ix / Ag);
-            var Iy = data.Iy + 2 * data.Ag * Mathf.Pow(data.Bf, 2) / 4 + Mathf.Pow(data.Bf, 3) * tp / 6;
+            var Iy = data.Iy + Mathf.Pow(data.Bf, 3) * tp / 6;
             var Ry = Mathf.Sqrt(Iy / Ag);
-            var Cw = Mathf.Pow(data.Bf, 3) * data.Tf * Mathf.Pow(data.Df, 2) / 24 +
-                     (tp * Mathf.Pow(data.Bf, 3) / 12) * (Mathf.Pow(tp + data.Tf + data.Df, 2) / 2);
+            var Cw = data.Cw;
             var J = data.J + (2.0f / 3.0f) * data.Bf * Mathf.Pow(tp, 3);
 
             K(mainColumn, out float Kx, out float Ky, Ix, Iy);
@@ -712,8 +715,8 @@ public class CoreCalculator : MonoBehaviour
 
             var feD = Mathf.Pow(Mathf.PI, 2) * E / Mathf.Pow(lambda, 2);
 
-            var feG = (Mathf.Pow(Mathf.PI, 2) * E * Cw / mainColumn.Length + (E / 2 * (1 + V)) * J)
-                      * (1.0f / Iy + Ix);
+            var feG = (Mathf.Pow(Mathf.PI, 2) * E * Cw / Mathf.Pow(mainColumn.Length, 2) + (E / (2 * (1 + V))) * J)
+                      * (1.0f / (Iy + Ix));
 
             float Fe;
 
@@ -746,8 +749,9 @@ public class CoreCalculator : MonoBehaviour
 
             if (fu <= Pn * Phy)
             {
-                var dpc = fu / Phy * Pn;
-                MainManager.Instance.MainWindow.StatusMessage(data.IPB + ": succeeded!", MainWindow.MessageType.Successful);
+                var dpc = fu / (Phy * Pn);
+                MainManager.Instance.MainWindow.ShowOutput("Use: " + "IPB" + data.IPB + " + 2 PL " + data.Bf + " * "+ tp +
+                                                           " cm \nD/C: " + dpc);
                 break;
             }
         }
@@ -763,14 +767,13 @@ public class CoreCalculator : MonoBehaviour
         IPEDataStructure data;
         while (NextRow(out data))
         {
-            float tp = ChooseTb(data.Tf);
+            float tp = ChooseTb(data.Tf * 10.0f) / 10.0f;
             var Ag = data.Ag + 2 * data.Bf * tp;
             var Ix = data.Ix + Mathf.Pow(tp, 3) * data.Bf / 6 + 2 * data.Bf * tp * Mathf.Pow((data.H / 2) + (tp / 2), 2);
             var Rx = Mathf.Sqrt(Ix / Ag);
-            var Iy = data.Iy + 2 * data.Ag * Mathf.Pow(data.Bf, 2) / 4 + Mathf.Pow(data.Bf, 3) * tp / 6;
+            var Iy = data.Iy + Mathf.Pow(data.Bf, 3) * tp / 6;
             var Ry = Mathf.Sqrt(Iy / Ag);
-            var Cw = Mathf.Pow(data.Bf, 3) * data.Tf * Mathf.Pow(data.Df, 2) / 24 +
-                     (tp * Mathf.Pow(data.Bf, 3) / 12) * (Mathf.Pow(tp + data.Tf + data.Df, 2) / 2);
+            var Cw = data.Cw;
             var J = data.J + (2.0f / 3.0f) * data.Bf * Mathf.Pow(tp, 3);
 
             K(mainColumn, out float Kx, out float Ky, Ix, Iy);
@@ -784,8 +787,8 @@ public class CoreCalculator : MonoBehaviour
 
             var feD = Mathf.Pow(Mathf.PI, 2) * E / Mathf.Pow(lambda, 2);
 
-            var feG = (Mathf.Pow(Mathf.PI, 2) * E * Cw / mainColumn.Length + (E / 2 * (1 + V)) * J)
-                      * (1.0f / Iy + Ix);
+            var feG = (Mathf.Pow(Mathf.PI, 2) * E * Cw / Mathf.Pow(mainColumn.Length, 2) + (E / (2 * (1 + V))) * J)
+                      * (1.0f / (Iy + Ix));
 
             float Fe;
 
@@ -818,8 +821,9 @@ public class CoreCalculator : MonoBehaviour
 
             if (fu <= Pn * Phy)
             {
-                var dpc = fu / Phy * Pn;
-                MainManager.Instance.MainWindow.StatusMessage(data.IPE + ": succeeded!", MainWindow.MessageType.Successful);
+                var dpc = fu / (Phy * Pn);
+                MainManager.Instance.MainWindow.ShowOutput("Use: " + "IPE " + data.IPE + " + 2 PL " + data.Bf + " * " + tp +
+                                                           " cm \nD/C: " + dpc);
                 break;
             }
         }
@@ -881,7 +885,7 @@ public class CoreCalculator : MonoBehaviour
 
         var botColumns = MainManager.Instance.MouseManager.Lines.FindAll(l =>
             (l.EndPoint == mainColumn.FirstPoint || l.FirstPoint == mainColumn.FirstPoint) &&
-            (l._curAxis == Line.Axis.Z || l._curAxis == Line.Axis.Nz) && 
+            (l._curAxis == Line.Axis.Z || l._curAxis == Line.Axis.Nz) &&
             l != mainColumn);
 
         var topBeamsX = topBeams.FindAll(b => b._curAxis == Line.Axis.X || b._curAxis == Line.Axis.Nx);
@@ -1107,11 +1111,15 @@ public class CoreCalculator : MonoBehaviour
 
     private static float ChooseTb(float tf)
     {
-        float res = 0;
-        foreach (var t in tps)
+        float res = tps[0];
+        for (int i = 0; i < tps.Length; i++)
         {
-            if (tf <= t)
-                res = t;
+            if (i == 0)
+                res = tps[i];
+            else if (tf > tps[i])
+                res = tps[i];
+            else if (tps[i - 1] < tf && tf < tps[i])
+                res = tps[i];
             else
                 break;
         }

@@ -154,14 +154,14 @@ public class CreateGridWindow : MonoBehaviour
             _xNo = Int32.Parse(_xNoInput.text);
             _yNo = Int32.Parse(_yNoInput.text);
 
-            var defaultXSpace = float.Parse(_xSpaceInput.text);
+            var defaultXSpace = float.Parse(_xSpaceInput.text) / 100.0f;
             _xSpaces = new float[_xNo];
             for (int i = 0; i < _xNo; i++)
             {
                 _xSpaces[i] = defaultXSpace;
             }
 
-            var defaultYSpace = float.Parse(_ySpaceInput.text);
+            var defaultYSpace = float.Parse(_ySpaceInput.text) / 100.0f;
             _ySpaces = new float[_yNo];
             for (int i = 0; i < _yNo; i++)
             {
@@ -186,7 +186,7 @@ public class CreateGridWindow : MonoBehaviour
 
             _sNo = Int32.Parse(_sNoInput.text);
 
-            var defaultSSpace = float.Parse(_sSpaceInput.text);
+            var defaultSSpace = float.Parse(_sSpaceInput.text) / 100.0f;
             _sSpaces = new float[_sNo];
             for (int i = 0; i < _sNo; i++)
             {
