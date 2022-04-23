@@ -30,19 +30,7 @@ public class MainManager : MonoBehaviour
 
     [Header("Calculations")]
     [SerializeField]
-    public IPB IpbScript;
-
-    [SerializeField]
-    public IPE IpeScript;
-
-    [SerializeField]
-    public BoxHssRectangular HssRectangularScript;
-
-    [SerializeField]
-    public BoxHssSquer HssSquareScript;
-
-    [SerializeField]
-    public RoundHss RoundHssScript;
+    public CoreCalculator CoreCalculator;
 
     public static MainManager Instance;
 

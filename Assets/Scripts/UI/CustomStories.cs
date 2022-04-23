@@ -48,7 +48,7 @@ public class CustomStories : MonoBehaviour
         for (int i = 0; i < s; i++)
         {
             if (float.TryParse(_sItems[i].Value.text, out float space))
-                sSpaces[i] = space;
+                sSpaces[i] = space / 100.0f;
             else
             {
                 MainManager.Instance.MainWindow.ShowError("Story No. " + (i + 1) + " Should have numeric value!");

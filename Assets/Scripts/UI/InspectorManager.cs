@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -44,6 +43,9 @@ public class InspectorManager : MonoBehaviour
     private GameObject _fyObj;
 
     [SerializeField]
+    private GameObject _colSuppObj;
+
+    [SerializeField]
     private TMP_Dropdown _fyDropdown;
 
     [SerializeField]
@@ -71,10 +73,16 @@ public class InspectorManager : MonoBehaviour
     private TMP_Dropdown _yBrace;
 
     [SerializeField]
+    private TMP_Dropdown _columnSupport;
+
+    [SerializeField]
     private GameObject _runComponents;
 
     [SerializeField]
     private TMP_Dropdown _outputOptions;
+
+    [SerializeField]
+    private Button _deleteBtn;
 
     private Line _selectedLine;
 
@@ -83,18 +91,20 @@ public class InspectorManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public void SelectLine(Line line)
     {
         _selectedLine = line;
+        _deleteBtn.interactable = true;
+
         if (line._curAxis == Line.Axis.Z || line._curAxis == Line.Axis.Nz)
         {
             _selectedLineType = LineType.Column;
@@ -112,6 +122,7 @@ public class InspectorManager : MonoBehaviour
     {
         Apply();
         DisplayOffInspector();
+        _deleteBtn.interactable = false;
     }
 
     private void DisplayColumnInspector(Line line)
@@ -120,16 +131,19 @@ public class InspectorManager : MonoBehaviour
         _forcesAD.SetActive(true);
         _forcesU.SetActive(true);
         _fyObj.SetActive(true);
+        _runComponents.SetActive(true);
+
 
         if (line.IsOnGround)
         {
             _xBraceObj.SetActive(true);
             _yBraceObj.SetActive(true);
+            _colSuppObj.SetActive(true);
         }
 
         _title.text = _selectedLineType.ToString();
 
-        _length.text = line.Length + " m";
+        _length.text = line.Length + " cm";
         _inertiaInp.text = line.Inertia.ToString();
         _xBrace.value = Convert.ToInt32(line.IsBracedX);
         _yBrace.value = Convert.ToInt32(line.IsBracedY);
@@ -143,10 +157,10 @@ public class InspectorManager : MonoBehaviour
         else
         {
             _forceUToggle.isOn = true;
-            _aliveForceInp.text = line.UltimateForce.ToString();
+            _ultimateForceInp.text = line.UltimateForce.ToString();
         }
 
-        
+
     }
 
     private void DisplayBeamInspector(Line line)
@@ -154,11 +168,10 @@ public class InspectorManager : MonoBehaviour
         Content.SetActive(true);
         _hConnectionObj.SetActive(true);
         _lConnectionObj.SetActive(true);
-        _runComponents.SetActive(true);
 
         _title.text = _selectedLineType.ToString();
 
-        _length.text = line.Length + " m";
+        _length.text = line.Length + " cm";
         _inertiaInp.text = line.Inertia.ToString();
         _hConnection.value = (int)line.HigherConnection;
         _lConnection.value = (int)line.LowerConnection;
@@ -173,6 +186,7 @@ public class InspectorManager : MonoBehaviour
         _lConnectionObj.SetActive(false);
         _xBraceObj.SetActive(false);
         _yBraceObj.SetActive(false);
+        _colSuppObj.SetActive(false);
         _fyObj.SetActive(false);
         _runComponents.SetActive(false);
         Content.SetActive(false);
@@ -180,12 +194,15 @@ public class InspectorManager : MonoBehaviour
 
     private void Apply()
     {
+        if (_selectedLine == null)
+            return;
         if (_selectedLineType == LineType.Column)
         {
             if (_selectedLine.IsOnGround)
             {
                 _selectedLine.IsBracedX = _xBrace.value != 0;
                 _selectedLine.IsBracedY = _yBrace.value != 0;
+                _selectedLine.SuppType = (Line.SupportType) _columnSupport.value;
             }
 
             _selectedLine.ForceAD = _forceADToggle.isOn;
@@ -213,9 +230,64 @@ public class InspectorManager : MonoBehaviour
         _selectedLine.Inertia = float.Parse(_inertiaInp.text);
     }
 
+    public void DeleteLine()
+    {
+        MainManager.Instance.MouseManager.DeleteSteelLine(_selectedLine);
+        DeselectLine();
+    }
+
     public void Run()
     {
+        Apply();
+        switch ((RunOption)_outputOptions.value)
+        {
+            case RunOption.IPB:
+                {
+                    MainManager.Instance.CoreCalculator.EvaluateIpb(_selectedLine);
+                    break;
+                }
+            case RunOption.ReinforcedIPB:
+                {
+                    MainManager.Instance.CoreCalculator.EvaluateReinforcedIpb(_selectedLine);
+                    break;
+                }
+            case RunOption.ReinforcedIPE:
+                {
+                    MainManager.Instance.CoreCalculator.EvaluateReinforcedIpe(_selectedLine);
+                    break;
+                }
+            case RunOption.DoubleIPEComplete:
+                {
+                    MainManager.Instance.CoreCalculator.EvaluateDoubleIpeComplete(_selectedLine);
+                    break;
+                }
+            case RunOption.DoubleIPEDiagonal:
+                {
+                    MainManager.Instance.CoreCalculator.EvaluateDoubleIpeDiagonal(_selectedLine);
+                    break;
+                }
+            case RunOption.DoubleIPECross:
+                {
+                    MainManager.Instance.CoreCalculator.EvaluateDoubleIpeCross(_selectedLine);
+                    break;
+                }
+            case RunOption.BoxHSSRectangular:
+                {
+                    MainManager.Instance.CoreCalculator.EvaluateHssBoxRect(_selectedLine);
+                    break;
+                }
+            case RunOption.BoxHSSSquare:
+                {
+                    MainManager.Instance.CoreCalculator.EvaluateSquareHss(_selectedLine);
+                    break;
+                }
+            case RunOption.RoundHSS:
+                {
+                    MainManager.Instance.CoreCalculator.EvaluateRoundHss(_selectedLine);
+                    break;
 
+                }
+        }
     }
 
     public void ForceADChanged(bool on)
@@ -243,10 +315,14 @@ public class InspectorManager : MonoBehaviour
     private enum RunOption
     {
         IPB,
-        IPE,
-        BoxHssRectangular,
-        BoxHssSquare,
-        RoundHss
+        ReinforcedIPB,
+        ReinforcedIPE,
+        DoubleIPEComplete,
+        DoubleIPEDiagonal,
+        DoubleIPECross,
+        BoxHSSRectangular,
+        BoxHSSSquare,
+        RoundHSS
     }
 
     private enum LineType

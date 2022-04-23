@@ -39,7 +39,7 @@ public class Line : MonoBehaviour
     public Axis _curAxis { get; private set; }
 
     public float Length =>
-        (_firstPoint.Instance3D.transform.position - _endPoint.Instance3D.transform.position).magnitude;
+        (_firstPoint.Instance3D.transform.position - _endPoint.Instance3D.transform.position).magnitude * 100.0f;
 
     public float AliveForces = 0.0f;
     public float DeadForces = 0.0f;
@@ -191,10 +191,9 @@ public class Line : MonoBehaviour
 
     public enum ConnectionType
     {
-        FixedConnection,
-        PinConnection,
-        ConsoleConnection,
-        RollerSupportConnection
+        FixedConnection = 0,
+        PinConnection = 1,
+        RollerSupportConnection = 2
     }
 
     public enum Axis
@@ -210,7 +209,7 @@ public class Line : MonoBehaviour
 
     public enum SupportType
     {
-        Fixed,
-        Pin
+        Fixed = 0,
+        Pin = 1
     }
 }

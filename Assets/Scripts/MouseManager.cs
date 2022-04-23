@@ -67,7 +67,7 @@ public class MouseManager : MonoBehaviour
 
     public List<Line> Lines = new List<Line>();
 
-    private Line _selectedLine = null;
+    public Line SelectedLine = null;
 
     private Line _drawingLine;
 
@@ -315,7 +315,7 @@ public class MouseManager : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
-                if (_selectedLine != null)
+                if (SelectedLine != null)
                     DeselectLine();
                 else if (TryHitLine(localPose, _3DCamera, out SteelLine sl))
                 {
@@ -343,7 +343,7 @@ public class MouseManager : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
-                if (_selectedLine != null)
+                if (SelectedLine != null)
                     DeselectLine();
                 else if (TryHitLine(localPose2D, _2DCamera, out SteelLine2D sl))
                 {
@@ -517,18 +517,18 @@ public class MouseManager : MonoBehaviour
 
     private void SelectLine(Line line)
     {
-        _selectedLine = line;
+        SelectedLine = line;
         MainManager.Instance.InspectorWindow.SelectLine(line);
-        _selectedLine.Select();
+        SelectedLine.Select();
 
         MainManager.Instance.MainWindow.StatusMessage("Steel Line Selected!", MainWindow.MessageType.Info);
     }
 
     private void DeselectLine()
     {
-        _selectedLine.Deselect();
+        SelectedLine.Deselect();
         MainManager.Instance.InspectorWindow.DeselectLine();
-        _selectedLine = null;
+        SelectedLine = null;
         MainManager.Instance.MainWindow.StatusMessage("Steel Line Deselected!", MainWindow.MessageType.Info);
     }
 

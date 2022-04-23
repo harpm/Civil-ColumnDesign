@@ -76,7 +76,7 @@ public class CustomXY : MonoBehaviour
         {
             if (float.TryParse(_xItems[i].Value.text, out float space))
             {
-                xSpaces[i] = space;
+                xSpaces[i] = space / 100.0f;
             }
             else
             {
@@ -91,7 +91,7 @@ public class CustomXY : MonoBehaviour
         {
             if (float.TryParse(_yItems[i].Value.text, out float space))
             {
-                ySpaces[i] = space;
+                ySpaces[i] = space / 100.0f;
             }
             else
             {

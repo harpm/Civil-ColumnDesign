@@ -18,7 +18,13 @@ public class MainWindow : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI _statusText;
 
-        // Start is called before the first frame update
+    [SerializeField]
+    private GameObject _outputWindow;
+
+    [SerializeField]
+    private TextMeshProUGUI _outputText;
+
+    // Start is called before the first frame update
     void Start()
     {
 
@@ -51,6 +57,17 @@ public class MainWindow : MonoBehaviour
     public void DismissError()
     {
         _errorWindow.gameObject.SetActive(false);
+    }
+
+    public void ShowOutput(string message)
+    {
+        _outputWindow.gameObject.SetActive(true);
+        _outputText.text = message;
+    }
+
+    public void CloseOutput()
+    {
+        _outputWindow.gameObject.SetActive(false);
     }
 
     public void StatusMessage(string message, MessageType type)

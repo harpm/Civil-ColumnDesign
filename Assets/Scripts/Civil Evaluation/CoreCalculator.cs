@@ -5,7 +5,7 @@ using Mono.Data.Sqlite;
 using TMPro;
 using UnityEngine;
 
-public class IPB : MonoBehaviour
+public class CoreCalculator : MonoBehaviour
 {
     private IDbConnection _connection;
     private IDbCommand _dbCmd;
@@ -76,13 +76,13 @@ public class IPB : MonoBehaviour
                 Iy = _reader.GetFloat(4),
                 Rx = _reader.GetFloat(5),
                 Ry = _reader.GetFloat(6),
-                H = _reader.GetFloat(7),
-                Tf = _reader.GetFloat(8),
-                Bf = _reader.GetFloat(9),
-                Df = _reader.GetFloat(10),
-                Hw = _reader.GetFloat(11),
-                Tw = _reader.GetFloat(12),
-                A = _reader.GetFloat(13),
+                H = _reader.GetFloat(7) / 10.0f,
+                Tf = _reader.GetFloat(8) / 10.0f,
+                Bf = _reader.GetFloat(9) / 10.0f,
+                Df = _reader.GetFloat(10) / 10.0f,
+                Hw = _reader.GetFloat(11) / 10.0f,
+                Tw = _reader.GetFloat(12) / 10.0f,
+                A = _reader.GetFloat(13) / 10.0f,
                 Cw = _reader.GetFloat(14),
                 J = _reader.GetFloat(15),
                 F = _reader.GetFloat(16),
@@ -109,13 +109,13 @@ public class IPB : MonoBehaviour
                 Iy = _reader.GetFloat(4),
                 Rx = _reader.GetFloat(5),
                 Ry = _reader.GetFloat(6),
-                H = _reader.GetFloat(7),
-                Tf = _reader.GetFloat(8),
-                Bf = _reader.GetFloat(9),
-                Df = _reader.GetFloat(10),
-                Hw = _reader.GetFloat(11),
-                Tw = _reader.GetFloat(12),
-                A = _reader.GetFloat(13),
+                H = _reader.GetFloat(7) / 10.0f,
+                Tf = _reader.GetFloat(8) / 10.0f,
+                Bf = _reader.GetFloat(9) / 10.0f,
+                Df = _reader.GetFloat(10) / 10.0f,
+                Hw = _reader.GetFloat(11) / 10.0f,
+                Tw = _reader.GetFloat(12) / 10.0f,
+                A = _reader.GetFloat(13) / 10.0f,
                 Cw = _reader.GetFloat(14),
                 J = _reader.GetFloat(15),
                 F = _reader.GetFloat(16),
@@ -142,9 +142,9 @@ public class IPB : MonoBehaviour
                 Iy = _reader.GetFloat(4),
                 Rx = _reader.GetFloat(5),
                 Ry = _reader.GetFloat(6),
-                B = _reader.GetFloat(7),
-                H = _reader.GetFloat(8),
-                T = _reader.GetFloat(9),
+                B = _reader.GetFloat(7) / 10.0f,
+                H = _reader.GetFloat(8) / 10.0f,
+                T = _reader.GetFloat(9) / 10.0f,
                 F = _reader.GetFloat(10),
 
             };
@@ -167,8 +167,8 @@ public class IPB : MonoBehaviour
                 Ag = _reader.GetFloat(2),
                 I = _reader.GetFloat(3),
                 R = _reader.GetFloat(4),
-                D = _reader.GetFloat(5),
-                T = _reader.GetFloat(6),
+                D = _reader.GetFloat(5) / 10.0f,
+                T = _reader.GetFloat(6) / 10.0f,
                 F = _reader.GetFloat(7),
 
             };
@@ -191,8 +191,8 @@ public class IPB : MonoBehaviour
                 Ag = _reader.GetFloat(2),
                 I = _reader.GetFloat(3),
                 R = _reader.GetFloat(4),
-                B = _reader.GetFloat(5),
-                T = _reader.GetFloat(6),
+                B = _reader.GetFloat(5) / 10.0f,
+                T = _reader.GetFloat(6) / 10.0f,
                 F = _reader.GetFloat(7),
 
             };
@@ -222,6 +222,7 @@ public class IPB : MonoBehaviour
     {
         OpenConnection();
         RequestIpbData();
+        bool findAns = false;
 
         IPBDataStructure data;
         while (NextRow(out data))
@@ -237,10 +238,9 @@ public class IPB : MonoBehaviour
 
             var feD = Mathf.Pow(Mathf.PI, 2) * E / Mathf.Pow(lambda, 2);
 
-            var g = (E / 2) * (1 + V);
+            var g = E / (2 * (1 + V));
 
-            var feG = (Mathf.Pow(Mathf.PI, 2) * E * data.Cw / Mathf.Pow(mainColumn.Length, 2) + g * data.J)
-                      * (1.0f / data.Iy + data.Ix);
+            var feG = (Mathf.Pow(Mathf.PI, 2) * E * data.Cw / Mathf.Pow(mainColumn.Length, 2) + g * data.J) * (1.0f / (data.Iy + data.Ix));
 
             float Fe;
 
@@ -275,11 +275,17 @@ public class IPB : MonoBehaviour
 
             if (fu <= Pn * Phy) // D / C = pu / phy * pn
             {
-                MainManager.Instance.MainWindow.StatusMessage(data.IPB + ": succeeded!",
-                    MainWindow.MessageType.Successful);
+                var Dpc = fu / (Pn * Phy);
+                MainManager.Instance.MainWindow.ShowOutput("Use: IPB " + data.IPB + "\nD / C : " + Dpc);
+                findAns = true;
                 break;
             }
 
+        }
+
+        if (!findAns)
+        {
+            MainManager.Instance.MainWindow.ShowOutput("No answer found!");
         }
 
         CloseConnection();
@@ -542,7 +548,7 @@ public class IPB : MonoBehaviour
         CloseConnection();
     }
 
-    private void EvaluateHssBoxRect(Line mainColumn)
+    public void EvaluateHssBoxRect(Line mainColumn)
     {
         var lambdaR = 1.4f * Mathf.Sqrt(E / mainColumn.Fy);
 
@@ -598,7 +604,7 @@ public class IPB : MonoBehaviour
         CloseConnection();
     }
 
-    private void EvaluateSquareHss(Line mainColumn)
+    public void EvaluateSquareHss(Line mainColumn)
     {
         var lambdaR = 1.4f * Mathf.Sqrt(E / mainColumn.Fy);
 
@@ -654,7 +660,7 @@ public class IPB : MonoBehaviour
         CloseConnection();
     }
 
-    private void EvaluateRoundHss(Line mainColumn)
+    public void EvaluateRoundHss(Line mainColumn)
     {
         OpenConnection();
         RequestHssRectData();
@@ -706,7 +712,7 @@ public class IPB : MonoBehaviour
         CloseConnection();
     }
 
-    private void EvaluateReinforcedIpb(Line mainColumn)
+    public void EvaluateReinforcedIpb(Line mainColumn)
     {
         OpenConnection();
         RequestIpbData();
@@ -778,7 +784,7 @@ public class IPB : MonoBehaviour
         CloseConnection();
     }
 
-    private void EvaluateReinforcedIpe(Line mainColumn)
+    public void EvaluateReinforcedIpe(Line mainColumn)
     {
         OpenConnection();
         RequestIpeData();
@@ -850,6 +856,7 @@ public class IPB : MonoBehaviour
         CloseConnection();
     }
 
+
     private static float Fcr(float lamda, float Ix, float Iy, float cw, float length, float j, float Fy)
     {
         var feD = Mathf.Pow(Mathf.PI, 2) * E / Mathf.Pow(lamda, 2);
@@ -887,20 +894,22 @@ public class IPB : MonoBehaviour
     {
         var topBeams = MainManager.Instance.MouseManager.Lines.FindAll(l =>
             (l.EndPoint == mainColumn.EndPoint || l.FirstPoint == mainColumn.EndPoint) &&
-            (l._curAxis != Line.Axis.Z || l._curAxis != Line.Axis.Nz));
+            (l._curAxis != Line.Axis.Z && l._curAxis != Line.Axis.Nz));
 
         var topColumns = MainManager.Instance.MouseManager.Lines.FindAll(l =>
             (l.EndPoint == mainColumn.EndPoint || l.FirstPoint == mainColumn.EndPoint) &&
-            (l._curAxis == Line.Axis.Z || l._curAxis == Line.Axis.Nz));
+            (l._curAxis == Line.Axis.Z || l._curAxis == Line.Axis.Nz) &&
+            l != mainColumn);
 
         var botBeams = MainManager.Instance.MouseManager.Lines.FindAll(l =>
-            (l.EndPoint == mainColumn.EndPoint || l.FirstPoint == mainColumn.FirstPoint) &&
-            (l._curAxis != Line.Axis.Z || l._curAxis != Line.Axis.Nz));
+            (l.EndPoint == mainColumn.FirstPoint || l.FirstPoint == mainColumn.FirstPoint) &&
+            (l._curAxis != Line.Axis.Z && l._curAxis != Line.Axis.Nz));
 
 
         var botColumns = MainManager.Instance.MouseManager.Lines.FindAll(l =>
-            (l.EndPoint == mainColumn.EndPoint || l.FirstPoint == mainColumn.FirstPoint) &&
-            (l._curAxis == Line.Axis.Z || l._curAxis == Line.Axis.Nz));
+            (l.EndPoint == mainColumn.FirstPoint || l.FirstPoint == mainColumn.FirstPoint) &&
+            (l._curAxis == Line.Axis.Z || l._curAxis == Line.Axis.Nz) && 
+            l != mainColumn);
 
         var topBeamsX = topBeams.FindAll(b => b._curAxis == Line.Axis.X || b._curAxis == Line.Axis.Nx);
         var botBeamsX = botBeams.FindAll(b => b._curAxis == Line.Axis.X || b._curAxis == Line.Axis.Nx);
@@ -1080,7 +1089,7 @@ public class IPB : MonoBehaviour
                 }
 
                 var inertia = 0.0f;
-                if (mainColumn.IsBracedY)
+                if (mainColumn.IsBracedX)
                     inertia = Mathf.Max(ix, iy);
                 else
                     inertia = ix;
@@ -1113,7 +1122,7 @@ public class IPB : MonoBehaviour
     {
         float res = 0.0f;
 
-        float topTotal = mainC.Inertia / mainC.Length;
+        float topTotal = mainInertia / mainC.Length;
 
         for (int j = 0; j < columns.Count; j++)
         {
@@ -1126,7 +1135,8 @@ public class IPB : MonoBehaviour
             botTotal += b[j] * (beams[j].Inertia / beams[j].Length);
         }
 
-        res = topTotal / botTotal;
+        if (botTotal != 0)
+            res = topTotal / botTotal;
 
         return res;
     }
