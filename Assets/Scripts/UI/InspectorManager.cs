@@ -132,12 +132,11 @@ public class InspectorManager : MonoBehaviour
         _forcesU.SetActive(true);
         _fyObj.SetActive(true);
         _runComponents.SetActive(true);
-
+        _xBraceObj.SetActive(true);
+        _yBraceObj.SetActive(true);
 
         if (line.IsOnGround)
         {
-            _xBraceObj.SetActive(true);
-            _yBraceObj.SetActive(true);
             _colSuppObj.SetActive(true);
         }
 
@@ -198,10 +197,11 @@ public class InspectorManager : MonoBehaviour
             return;
         if (_selectedLineType == LineType.Column)
         {
+            _selectedLine.IsBracedX = _xBrace.value != 0;
+            _selectedLine.IsBracedY = _yBrace.value != 0;
+
             if (_selectedLine.IsOnGround)
             {
-                _selectedLine.IsBracedX = _xBrace.value != 0;
-                _selectedLine.IsBracedY = _yBrace.value != 0;
                 _selectedLine.SuppType = (Line.SupportType) _columnSupport.value;
             }
 

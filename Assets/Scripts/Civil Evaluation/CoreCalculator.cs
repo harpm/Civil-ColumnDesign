@@ -280,7 +280,6 @@ public class CoreCalculator : MonoBehaviour
                 findAns = true;
                 break;
             }
-
         }
 
         if (!findAns)
@@ -926,102 +925,130 @@ public class CoreCalculator : MonoBehaviour
 
         if (!mainColumn.IsOnGround)
         {
-            for (int i = 0; i < botBeamsX.Count; i++)
+            if (mainColumn.IsBracedX)
             {
-                var beam = botBeamsX[i];
-
-                var nearConnection = beam.FirstPoint == mainColumn.FirstPoint ? beam.LowerConnection : beam.HigherConnection;
-                var farConnection = beam.FirstPoint == mainColumn.FirstPoint ? beam.HigherConnection : beam.LowerConnection;
-
-                if ((beam.FirstPoint == mainColumn.FirstPoint ? beam.EndPoint : beam.FirstPoint).IsEmpty)
-                    botBX[i] = 0.0f;
-                else if (nearConnection == Line.ConnectionType.PinConnection)
-                    botBX[i] = 0.0f;
-                else if (farConnection == Line.ConnectionType.FixedConnection)
-                    botBX[i] = 2.0f;
-                else if (farConnection == Line.ConnectionType.PinConnection)
-                    botBX[i] = 1.5f;
-                else if (farConnection == Line.ConnectionType.RollerSupportConnection)
-                    botBX[i] = 2.0f / 3.0f;
+                kx = 1.0f;
+            }
+            else
+            {
+                var inertia = 0.0f;
+                if (mainColumn.IsBracedY)
+                    inertia = Mathf.Max(ix, iy);
                 else
-                    botBX[i] = 1.0f;
+                    inertia = ix;
+
+                for (int i = 0; i < botBeamsX.Count; i++)
+                {
+                    var beam = botBeamsX[i];
+
+                    var nearConnection = beam.FirstPoint == mainColumn.FirstPoint ? beam.LowerConnection : beam.HigherConnection;
+                    var farConnection = beam.FirstPoint == mainColumn.FirstPoint ? beam.HigherConnection : beam.LowerConnection;
+
+                    if ((beam.FirstPoint == mainColumn.FirstPoint ? beam.EndPoint : beam.FirstPoint).IsEmpty)
+                        botBX[i] = 0.0f;
+                    else if (nearConnection == Line.ConnectionType.PinConnection)
+                        botBX[i] = 0.0f;
+                    else if (farConnection == Line.ConnectionType.FixedConnection)
+                        botBX[i] = 2.0f;
+                    else if (farConnection == Line.ConnectionType.PinConnection)
+                        botBX[i] = 1.5f;
+                    else if (farConnection == Line.ConnectionType.RollerSupportConnection)
+                        botBX[i] = 2.0f / 3.0f;
+                    else
+                        botBX[i] = 1.0f;
+                }
+
+                Gbx = G(mainColumn, botColumns, botBeamsX, botBX, inertia);
+
+                for (int i = 0; i < topBeamsX.Count; i++)
+                {
+                    var beam = topBeamsX[i];
+
+                    var nearConnection = beam.FirstPoint == mainColumn.EndPoint ? beam.LowerConnection : beam.HigherConnection;
+                    var farConnection = beam.FirstPoint == mainColumn.EndPoint ? beam.HigherConnection : beam.LowerConnection;
+
+                    if ((beam.FirstPoint == mainColumn.EndPoint ? beam.EndPoint : beam.FirstPoint).IsEmpty)
+                        topBX[i] = 0.0f;
+                    else if (nearConnection == Line.ConnectionType.PinConnection)
+                        topBX[i] = 0.0f;
+                    else if (farConnection == Line.ConnectionType.FixedConnection)
+                        topBX[i] = 2.0f;
+                    else if (farConnection == Line.ConnectionType.PinConnection)
+                        topBX[i] = 1.5f;
+                    else if (farConnection == Line.ConnectionType.RollerSupportConnection)
+                        topBX[i] = 2.0f / 3.0f;
+                    else
+                        topBX[i] = 1.0f;
+                }
+
+                Gtx = G(mainColumn, topColumns, topBeamsX, topBX, inertia);
+
+                kx = K(Gbx, Gtx);
             }
 
-            Gbx = G(mainColumn, botColumns, botBeamsX, botBX, ix);
-
-
-            for (int i = 0; i < botBeamsY.Count; i++)
+            if (mainColumn.IsBracedY)
             {
-                var beam = botBeamsY[i];
-
-                var nearConnection = beam.FirstPoint == mainColumn.FirstPoint ? beam.LowerConnection : beam.HigherConnection;
-                var farConnection = beam.FirstPoint == mainColumn.FirstPoint ? beam.HigherConnection : beam.LowerConnection;
-
-
-                if ((beam.FirstPoint == mainColumn.FirstPoint ? beam.EndPoint : beam.FirstPoint).IsEmpty)
-                    botBY[i] = 0.0f;
-                else if (nearConnection == Line.ConnectionType.PinConnection)
-                    botBY[i] = 0.0f;
-                else if (farConnection == Line.ConnectionType.FixedConnection)
-                    botBY[i] = 2.0f;
-                else if (farConnection == Line.ConnectionType.PinConnection)
-                    botBY[i] = 1.5f;
-                else if (farConnection == Line.ConnectionType.RollerSupportConnection)
-                    botBY[i] = 2.0f / 3.0f;
+                ky = 1.0f;
+            }
+            else
+            {
+                var inertia = 0.0f;
+                if (mainColumn.IsBracedX)
+                    inertia = Mathf.Max(ix, iy);
                 else
-                    botBY[i] = 1.0f;
+                    inertia = iy;
+
+                for (int i = 0; i < botBeamsY.Count; i++)
+                {
+                    var beam = botBeamsY[i];
+
+                    var nearConnection = beam.FirstPoint == mainColumn.FirstPoint ? beam.LowerConnection : beam.HigherConnection;
+                    var farConnection = beam.FirstPoint == mainColumn.FirstPoint ? beam.HigherConnection : beam.LowerConnection;
+
+
+                    if ((beam.FirstPoint == mainColumn.FirstPoint ? beam.EndPoint : beam.FirstPoint).IsEmpty)
+                        botBY[i] = 0.0f;
+                    else if (nearConnection == Line.ConnectionType.PinConnection)
+                        botBY[i] = 0.0f;
+                    else if (farConnection == Line.ConnectionType.FixedConnection)
+                        botBY[i] = 2.0f;
+                    else if (farConnection == Line.ConnectionType.PinConnection)
+                        botBY[i] = 1.5f;
+                    else if (farConnection == Line.ConnectionType.RollerSupportConnection)
+                        botBY[i] = 2.0f / 3.0f;
+                    else
+                        botBY[i] = 1.0f;
+                }
+
+                Gby = G(mainColumn, botColumns, botBeamsY, botBY, inertia);
+
+                for (int i = 0; i < topBeamsY.Count; i++)
+                {
+                    var beam = topBeamsY[i];
+
+                    var nearConnection = beam.FirstPoint == mainColumn.EndPoint ? beam.LowerConnection : beam.HigherConnection;
+                    var farConnection = beam.FirstPoint == mainColumn.EndPoint ? beam.HigherConnection : beam.LowerConnection;
+
+                    if ((beam.FirstPoint == mainColumn.EndPoint ? beam.EndPoint : beam.FirstPoint).IsEmpty)
+                        topBY[i] = 0.0f;
+                    else if (nearConnection == Line.ConnectionType.PinConnection)
+                        topBY[i] = 0.0f;
+                    else if (farConnection == Line.ConnectionType.FixedConnection)
+                        topBY[i] = 2.0f;
+                    else if (farConnection == Line.ConnectionType.PinConnection)
+                        topBY[i] = 1.5f;
+                    else if (farConnection == Line.ConnectionType.RollerSupportConnection)
+                        topBY[i] = 2.0f / 3.0f;
+                    else
+                        topBX[i] = 1.0f;
+                }
+
+                Gty = G(mainColumn, topColumns, topBeamsY, topBY, inertia);
+
+
+                ky = K(Gby, Gty);
             }
 
-            Gby = G(mainColumn, botColumns, botBeamsY, botBY, iy);
-
-            for (int i = 0; i < topBeamsX.Count; i++)
-            {
-                var beam = topBeamsX[i];
-
-                var nearConnection = beam.FirstPoint == mainColumn.EndPoint ? beam.LowerConnection : beam.HigherConnection;
-                var farConnection = beam.FirstPoint == mainColumn.EndPoint ? beam.HigherConnection : beam.LowerConnection;
-
-                if ((beam.FirstPoint == mainColumn.EndPoint ? beam.EndPoint : beam.FirstPoint).IsEmpty)
-                    topBX[i] = 0.0f;
-                else if (nearConnection == Line.ConnectionType.PinConnection)
-                    topBX[i] = 0.0f;
-                else if (farConnection == Line.ConnectionType.FixedConnection)
-                    topBX[i] = 2.0f;
-                else if (farConnection == Line.ConnectionType.PinConnection)
-                    topBX[i] = 1.5f;
-                else if (farConnection == Line.ConnectionType.RollerSupportConnection)
-                    topBX[i] = 2.0f / 3.0f;
-                else
-                    topBX[i] = 1.0f;
-            }
-
-            Gtx = G(mainColumn, topColumns, topBeamsX, topBX, ix);
-
-            for (int i = 0; i < topBeamsY.Count; i++)
-            {
-                var beam = topBeamsY[i];
-
-                var nearConnection = beam.FirstPoint == mainColumn.EndPoint ? beam.LowerConnection : beam.HigherConnection;
-                var farConnection = beam.FirstPoint == mainColumn.EndPoint ? beam.HigherConnection : beam.LowerConnection;
-
-                if ((beam.FirstPoint == mainColumn.EndPoint ? beam.EndPoint : beam.FirstPoint).IsEmpty)
-                    topBY[i] = 0.0f;
-                else if (nearConnection == Line.ConnectionType.PinConnection)
-                    topBY[i] = 0.0f;
-                else if (farConnection == Line.ConnectionType.FixedConnection)
-                    topBY[i] = 2.0f;
-                else if (farConnection == Line.ConnectionType.PinConnection)
-                    topBY[i] = 1.5f;
-                else if (farConnection == Line.ConnectionType.RollerSupportConnection)
-                    topBY[i] = 2.0f / 3.0f;
-                else
-                    topBX[i] = 1.0f;
-            }
-
-            Gty = G(mainColumn, topColumns, topBeamsY, topBY, iy);
-
-            kx = K(Gbx, Gtx);
-            ky = K(Gby, Gty);
         }
         else
         {
@@ -1092,7 +1119,7 @@ public class CoreCalculator : MonoBehaviour
                 if (mainColumn.IsBracedX)
                     inertia = Mathf.Max(ix, iy);
                 else
-                    inertia = ix;
+                    inertia = iy;
 
                 Gty = G(mainColumn, topColumns, topBeamsY, topBY, inertia);
                 Gby = mainColumn.SuppType == Line.SupportType.Fixed ? 1.0f : 10.0f;
