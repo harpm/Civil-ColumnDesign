@@ -234,6 +234,12 @@ public class GridBuilder : MonoBehaviour
 
             }
         }
+
+        var lines = MainManager.Instance.MouseManager.Lines.FindAll(l => l.FirstPoint.X == (x+1) && l.EndPoint.X == (x+1));
+        foreach (var l in lines)
+        {
+            MainManager.Instance.MouseManager.Sync2DInstance(l);
+        }
     }
 
     public void ShowSliceY(int y)
@@ -301,6 +307,12 @@ public class GridBuilder : MonoBehaviour
                     }
                 }
             }
+        }
+
+        var lines = MainManager.Instance.MouseManager.Lines.FindAll(l => l.FirstPoint.Y == (y+1) && l.EndPoint.Y == (y+1));
+        foreach (var l in lines)
+        {
+            MainManager.Instance.MouseManager.Sync2DInstance(l);
         }
     }
 
@@ -370,6 +382,12 @@ public class GridBuilder : MonoBehaviour
                     }
                 }
             }
+        }
+
+        var lines = MainManager.Instance.MouseManager.Lines.FindAll(l => l.FirstPoint.S == (s+1) && l.EndPoint.S == (s+1));
+        foreach (var l in lines)
+        {
+            MainManager.Instance.MouseManager.Sync2DInstance(l);
         }
     }
 

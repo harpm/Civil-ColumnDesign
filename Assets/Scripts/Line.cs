@@ -164,7 +164,7 @@ public class Line : MonoBehaviour
 
     }
 
-    private void RedrawLines()
+    public void RedrawLines()
     {
         if (Instance2D != null)
         {
