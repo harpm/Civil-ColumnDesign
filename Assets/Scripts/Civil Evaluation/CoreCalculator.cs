@@ -16,7 +16,7 @@ public class CoreCalculator : MonoBehaviour
     private const float V = 0.3f;
     private const float Phy = 0.9f;
     private static readonly float[] tps = { 8.0f, 10.0f, 12.0f, 15.0f, 18.0f, 20.0f, 25.0f };
-
+    private string conn;
 
     private static FeState lastState = default;
 
@@ -24,7 +24,7 @@ public class CoreCalculator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        conn = "URI=file:" + Application.dataPath + "/Data/Eshtal.db";
     }
 
     // Update is called once per frame
@@ -35,7 +35,6 @@ public class CoreCalculator : MonoBehaviour
 
     private void OpenConnection()
     {
-        string conn = "URI=file:" + Application.dataPath + "/Data/Eshtal.db";
         _connection = new SqliteConnection(conn);
         _connection.Open();
     }

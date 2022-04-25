@@ -94,6 +94,14 @@ public class MainWindow : MonoBehaviour
         }
     }
 
+    public void ExitApplication()
+    {
+        Destroy(MainManager.Instance.MouseManager.gameObject);
+        Destroy(MainManager.Instance.CameraManager.gameObject);
+        Destroy(MainManager.Instance.GridBuilder.gameObject);
+        Application.Quit(0);
+    }
+
     public enum MessageType
     {
         Info,
