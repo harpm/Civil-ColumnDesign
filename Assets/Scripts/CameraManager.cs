@@ -41,9 +41,9 @@ public class CameraManager : MonoBehaviour
         var size = MainManager.Instance.GridBuilder.GetSize2D();
 
         float distance = Mathf.Max(size.x, size.y);
-        distance /= 2.0f * Mathf.Tan(0.5f * _3DCamera.fieldOfView * Mathf.Deg2Rad);
+        distance /= Mathf.Abs(2.0f * Mathf.Tan(0.5f * _3DCamera.fieldOfView * Mathf.Deg2Rad));
 
         _2DCamera.transform.position = new Vector3(center.x - 1, center.y + 2,
-            center.z - _3DCamera.transform.forward.normalized.z * distance * 3.0f);
+            -(Mathf.Abs(center.z - _3DCamera.transform.forward.normalized.z) * distance * 4.5f));
     }
 }

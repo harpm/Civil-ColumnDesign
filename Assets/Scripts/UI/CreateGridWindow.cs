@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization.Formatters;
 using Michsky.UI.ModernUIPack;
 using TMPro;
 using UnityEngine;
@@ -129,39 +130,75 @@ public class CreateGridWindow : MonoBehaviour
         {
             if (_xNoInput.text == string.Empty)
             {
-                ShowError("No x should have numeric value");
+                ShowError("No. x should have numeric value");
                 return;
             }
 
             if (_yNoInput.text == string.Empty)
             {
-                ShowError("No y Should have numeric value");
+                ShowError("No. y Should have numeric value");
                 return;
             }
 
             if (_xSpaceInput.text == string.Empty)
             {
-                ShowError("No y Should have numeric value");
+                ShowError("No. x space Should have numeric value");
                 return;
             }
 
             if (_ySpaceInput.text == string.Empty)
             {
-                ShowError("No y Should have numeric value");
+                ShowError("No. y space Should have numeric value");
                 return;
             }
 
-            _xNo = Int32.Parse(_xNoInput.text);
-            _yNo = Int32.Parse(_yNoInput.text);
+            var tempX = Int32.Parse(_xNoInput.text);
+            if (tempX >= 2)
+                _xNo = tempX;
+            else
+            {
+                ShowError("Please Enter X No. equal or higher or equal 2.");
+                return;
+            }
 
-            var defaultXSpace = float.Parse(_xSpaceInput.text) / 100.0f;
+            var tempY = Int32.Parse(_yNoInput.text);
+            if (tempY >= 2)
+                _yNo = tempY;
+            else
+            {
+                ShowError("Please Enter Y No. equal or higher or equal 2.");
+                return;
+            }
+
+            var xTempSpace = float.Parse(_xSpaceInput.text);
+            float defaultXSpace = 0.0f;
+            if (xTempSpace > 350.0f)
+            {
+                defaultXSpace = xTempSpace / 100.0f;
+            }
+            else
+            {
+                ShowError("Please Enter X Space higher than 100.");
+                return;
+            }
+
             _xSpaces = new float[_xNo];
             for (int i = 0; i < _xNo; i++)
             {
                 _xSpaces[i] = defaultXSpace;
             }
 
-            var defaultYSpace = float.Parse(_ySpaceInput.text) / 100.0f;
+            var yTempSpace = float.Parse(_ySpaceInput.text);
+            float defaultYSpace = 0.0f;
+
+            if (yTempSpace > 350.0f)
+                defaultYSpace = yTempSpace / 100.0f;
+            else
+            {
+                ShowError("Please Enter Y Space higher than 100.");
+                return;
+            }
+
             _ySpaces = new float[_yNo];
             for (int i = 0; i < _yNo; i++)
             {
@@ -173,20 +210,37 @@ public class CreateGridWindow : MonoBehaviour
         {
             if (_sNoInput.text == string.Empty)
             {
-                ShowError("No y Should have numeric value");
+                ShowError("No. Stories Should have numeric value");
                 return;
             }
 
             if (_sSpaceInput.text == string.Empty)
             {
-                ShowError("No y Should have numeric value");
+                ShowError("No. Stories Space Should have numeric value");
                 return;
             }
 
 
-            _sNo = Int32.Parse(_sNoInput.text);
+            var tempS = Int32.Parse(_sNoInput.text);
+            if (tempS >= 2)
+                _sNo = tempS;
+            else
+            {
+                ShowError("Please enter S number higher or equal 2");
+                return;
+            }
 
-            var defaultSSpace = float.Parse(_sSpaceInput.text) / 100.0f;
+            var sTempSpace = float.Parse(_sSpaceInput.text);
+            float defaultSSpace = 0.0f;
+
+            if (sTempSpace > 350.0f)
+                defaultSSpace = sTempSpace / 100.0f;
+            else
+            {
+                ShowError("Please Enter Story Space higher than 100.");
+                return;
+            }
+
             _sSpaces = new float[_sNo];
             for (int i = 0; i < _sNo; i++)
             {
