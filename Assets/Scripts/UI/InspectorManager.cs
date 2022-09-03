@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -84,6 +85,9 @@ public class InspectorManager : MonoBehaviour
     [SerializeField]
     private Button _deleteBtn;
 
+    [SerializeField]
+    private GameObject LoadingModal;
+    
     private Line _selectedLine;
 
     private LineType _selectedLineType;
@@ -191,6 +195,10 @@ public class InspectorManager : MonoBehaviour
         Content.SetActive(false);
     }
 
+    /// <summary>
+    /// Apply all the properties to the Selected Line Variable
+    /// in order to calculate the selected line requested profile
+    /// </summary>
     private void Apply()
     {
         if (_selectedLine == null)
@@ -238,61 +246,87 @@ public class InspectorManager : MonoBehaviour
 
     public void Run()
     {
+        StartCoroutine(RunCalculation());
+    }
+
+    public IEnumerator RunCalculation()
+    {
+        yield return new WaitForEndOfFrame();
+        StartCalculating();
+        yield return new WaitForEndOfFrame();
         Apply();
+        ProfileCalcResult res = new ProfileCalcResult();
+
         switch ((RunOption)_outputOptions.value)
         {
             case RunOption.IPB:
                 {
-                    MainManager.Instance.CoreCalculator.EvaluateIpb(_selectedLine);
+                    res = MainManager.Instance.CoreCalculator.EvaluateIpb(_selectedLine);
                     break;
                 }
             case RunOption.ReinforcedIPB:
                 {
-                    MainManager.Instance.CoreCalculator.EvaluateReinforcedIpb(_selectedLine);
+                    res = MainManager.Instance.CoreCalculator.EvaluateReinforcedIpb(_selectedLine);
                     break;
                 }
             case RunOption.ReinforcedIPE:
                 {
-                    MainManager.Instance.CoreCalculator.EvaluateReinforcedIpe(_selectedLine);
+                    res = MainManager.Instance.CoreCalculator.EvaluateReinforcedIpe(_selectedLine);
                     break;
                 }
             case RunOption.DoubleIPEComplete:
                 {
-                    MainManager.Instance.CoreCalculator.EvaluateDoubleIpeComplete(_selectedLine);
+                    res = MainManager.Instance.CoreCalculator.EvaluateDoubleIpeComplete(_selectedLine);
                     break;
                 }
             case RunOption.DoubleIPEDiagonal:
                 {
-                    MainManager.Instance.CoreCalculator.EvaluateDoubleIpeDiagonal(_selectedLine);
+                    res = MainManager.Instance.CoreCalculator.EvaluateDoubleIpeDiagonal(_selectedLine);
                     break;
                 }
             case RunOption.DoubleIPECross:
                 {
-                    MainManager.Instance.CoreCalculator.EvaluateDoubleIpeCross(_selectedLine);
+                    res = MainManager.Instance.CoreCalculator.EvaluateDoubleIpeCross(_selectedLine);
                     break;
                 }
             case RunOption.BoxHSSRectangular:
                 {
-                    MainManager.Instance.CoreCalculator.EvaluateHssBoxRect(_selectedLine);
+                    res = MainManager.Instance.CoreCalculator.EvaluateHssBoxRect(_selectedLine);
                     break;
                 }
             case RunOption.BoxHSSSquare:
                 {
-                    MainManager.Instance.CoreCalculator.EvaluateSquareHss(_selectedLine);
+                    res = MainManager.Instance.CoreCalculator.EvaluateSquareHss(_selectedLine);
                     break;
                 }
             case RunOption.RoundHSS:
                 {
-                    MainManager.Instance.CoreCalculator.EvaluateRoundHss(_selectedLine);
+                    res = MainManager.Instance.CoreCalculator.EvaluateRoundHss(_selectedLine);
                     break;
 
                 }
             case RunOption.EvaluateDoubleIpeParallel:
                 {
-                    MainManager.Instance.CoreCalculator.EvaluateDoubleIpeParallel(_selectedLine);
+                    res = MainManager.Instance.CoreCalculator.EvaluateDoubleIpeParallel(_selectedLine);
                     break;
                 }
         }
+        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForEndOfFrame();
+        StopCalculating();
+        MainManager.Instance.MainWindow.ShowOutput(res);
+
+    }
+
+
+    private void StartCalculating()
+    {
+        LoadingModal.SetActive(true);
+    }
+
+    private void StopCalculating()
+    {
+        LoadingModal.SetActive(false);
     }
 
     public void ForceADChanged(bool on)

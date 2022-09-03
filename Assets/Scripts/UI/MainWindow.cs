@@ -50,19 +50,20 @@ public class MainWindow : MonoBehaviour
 
     public void ShowError(string message)
     {
-        _errorWindow.gameObject.SetActive(true);
+        _errorWindow.SetActive(true);
         _errorMessage.text = message;
     }
 
     public void DismissError()
     {
-        _errorWindow.gameObject.SetActive(false);
+        _errorWindow.SetActive(false);
     }
 
-    public void ShowOutput(string message)
+    public void ShowOutput(ProfileCalcResult res)
     {
-        _outputWindow.gameObject.SetActive(true);
-        _outputText.text = message;
+        _outputWindow.SetActive(true);
+        _outputText.text = res.Answer;
+        
     }
 
     public void CloseOutput()

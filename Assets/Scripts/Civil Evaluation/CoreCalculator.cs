@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Runtime.ExceptionServices;
 using Mono.Data.Sqlite;
 using TMPro;
 using UnityEngine;
@@ -225,11 +226,12 @@ public class CoreCalculator : MonoBehaviour
     }
 
 
-    public void EvaluateIpb(Line mainColumn)
+    public ProfileCalcResult EvaluateIpb(Line mainColumn)
     {
         OpenConnection();
         RequestIpbData();
         bool findAns = false;
+        ProfileCalcResult res = new ProfileCalcResult();
 
         IPBDataStructure data;
         while (NextRow(out data))
@@ -252,29 +254,49 @@ public class CoreCalculator : MonoBehaviour
             var Fcr = CoreCalculator.Fcr(lambda, data.Ix, data.Iy, data.Cw, mainColumn.Length, data.J, mainColumn.Fy);
             var Pn = Fcr * data.Ag;
 
+            res = new ProfileCalcResult()
+            {
+                Kx = Kx,
+                Ky = Ky,
+                LambdaX = lambdaX,
+                LambdaY = lambdaY,
+                Lambda = lambda,
+                Fu = fu,
+                Fcr = Fcr,
+                Pn = Pn
+            };
+
             if (fu <= Pn * Phy)
             {
                 var Dpc = fu / (Pn * Phy);
-                MainManager.Instance.MainWindow.ShowOutput("Use: IPB " + data.IPB + "\nD / C : " + Dpc);
+                res.Answer = "Use: IPB " + data.IPB + "\nD / C : " + Dpc;
                 findAns = true;
+                res.Dpc = Dpc;
                 break;
             }
+
         }
+
+        res.IsAnswered = findAns;
 
         if (!findAns)
         {
-            MainManager.Instance.MainWindow.ShowOutput("No answer found!");
+            res.Answer = "No answer found!";
         }
 
         CloseConnection();
+
+        return res;
     }
 
-    public void EvaluateDoubleIpeComplete(Line mainColumn)
+    public ProfileCalcResult EvaluateDoubleIpeComplete(Line mainColumn)
     {
         OpenConnection();
         RequestIpeData();
-
+        ProfileCalcResult res = new ProfileCalcResult();
         IPEDataStructure data;
+        bool findAns = false;
+
         while (NextRow(out data))
         {
             float tp = ChooseTb(data.Tf * 10.0f) / 10.0f;
@@ -333,23 +355,56 @@ public class CoreCalculator : MonoBehaviour
 
             var Pn = Fcr * Ag;
 
+            res = new ProfileCalcResult()
+            {
+                Kx = Kx,
+                Ky = Ky,
+                Ix = Ix,
+                Iy = Iy,
+                Rx = Rx,
+                Ry = Ry,
+                Tp = tp,
+                Ag = Ag,
+                Cw = Cw,
+                J = J,
+                LambdaX = lambdaX,
+                LambdaY = lambdaY,
+                Lambda = lambda,
+                FeD = feD,
+                FeG = feG,
+                G = g,
+                Fe = Fe,
+                Fcr = Fcr,
+                Fu = fu
+            };
+
             if (fu <= Pn * Phy)
             {
                 var dpc = fu / (Phy * Pn);
-                MainManager.Instance.MainWindow.ShowOutput("Use: 2 IPE " + data.IPE + " @ " + Mathf.RoundToInt(data.A) +
-                                                           " + 2 PL " + " * " + tp + "\n" + "D / C: " + dpc);
+                res.Dpc = dpc;
+                res.Answer = "Use: 2 IPE " + data.IPE + " @ " + Mathf.RoundToInt(data.A) +
+                                                           " + 2 PL " + " * " + tp + "\n" + "D / C: " + dpc;
+                findAns = res.IsAnswered = true;
                 break;
             }
         }
 
+        if (!findAns)
+        {
+            res.Answer = "No answer found!";
+        }
+
         CloseConnection();
+        return res;
     }
 
-    public void EvaluateDoubleIpeDiagonal(Line mainColumn)
+    public ProfileCalcResult EvaluateDoubleIpeDiagonal(Line mainColumn)
     {
         var alpha = 60.0f;
+        bool findAns = false;
         OpenConnection();
         RequestIpeData();
+        ProfileCalcResult res = new ProfileCalcResult();
 
         IPEDataStructure data;
         while (NextRow(out data))
@@ -420,26 +475,58 @@ public class CoreCalculator : MonoBehaviour
 
             var bs = ChooseTb(Pb / (0.9f * fcr * tb));
 
+            res = new ProfileCalcResult()
+            {
+                Ag = Ag,
+                Ix = Ix,
+                Iy = Iy,
+                Rx = Rx,
+                Ry = Ry,
+                Cw = Cw,
+                J = J,
+                Lambda = lambda,
+                LambdaX = lambdaX,
+                LambdaY = lambdaY,
+                LambdaM = mLambda,
+                S = S,
+                A = a,
+                Fcr = fcr,
+                Tb = tb,
+                Rb = rb,
+                Vux = Vux,
+                Pb = Pb,
+                Pn = Pn
+            };
 
             if (fu <= Pn * Phy)
             {
                 var dpc = fu / (Phy * Pn);
-                MainManager.Instance.MainWindow.ShowOutput("Use: 2 IPE " + data.IPE + " @ " + Mathf.RoundToInt(data.A)
-                                                           + " + 2 PL " + bs + " * " + tb + "\nAlpha: " + alpha + "\n" 
-                                                           + "D / C: " + dpc);
+                res.Answer = "Use: 2 IPE " + data.IPE + " @ " + Mathf.RoundToInt(data.A)
+                             + " + 2 PL " + bs + " * " + tb + "\nAlpha: " + alpha + "\n" + "D / C: " + dpc;
+                res.Dpc = dpc;
+                findAns = res.IsAnswered = true;
                 break;
             }
 
         }
 
+        if (!findAns)
+        {
+            res.Answer = "No answer found!";
+        }
+
         CloseConnection();
+        return res;
     }
 
-    public void EvaluateDoubleIpeCross(Line mainColumn)
+    public ProfileCalcResult EvaluateDoubleIpeCross(Line mainColumn)
     {
         var alpha = 45.0f;
+        bool findAns = false;
         OpenConnection();
         RequestIpeData();
+
+        ProfileCalcResult res = new ProfileCalcResult();
 
         IPEDataStructure data;
         while (NextRow(out data))
@@ -511,27 +598,61 @@ public class CoreCalculator : MonoBehaviour
 
             var bs = ChooseTb(Pb / (0.9f * fcr * tb));
 
+            res = new ProfileCalcResult
+            {
+                Ag = Ag,
+                Ix = Ix,
+                Iy = Iy,
+                Rx = Rx,
+                Ry = Ry,
+                Cw = Cw,
+                J = J,
+                Kx = Kx,
+                Ky = Ky,
+                A = a,
+                R = rMin,
+                LambdaX = lambdaX,
+                LambdaY = lambdaY,
+                Lambda = lambda,
+                LambdaM = mLambda,
+                Fu = fu,
+                S = S,
+                Pn = Pn,
+                Tb = tb,
+                Rb = rb,
+                Fe = Fe,
+                Fcr = fcr
+            };
 
             if (fu <= Pn * Phy)
             {
                 var dpc = fu / (Phy * Pn);
-                MainManager.Instance.MainWindow.ShowOutput("Use: 2 IPE " + data.IPE + " @ " + Mathf.RoundToInt(data.A)
+                res.Answer = "Use: 2 IPE " + data.IPE + " @ " + Mathf.RoundToInt(data.A)
                                                            + " + 2 PL " + bs + " * " + tb + "\nAlpha: " + alpha + "\n"
-                                                           + "D / C: " + dpc);
+                                                           + "D / C: " + dpc;
+                res.Dpc = dpc;
+                findAns = res.IsAnswered = true;
                 break;
             }
 
         }
 
+        if (!findAns)
+        {
+            res.Answer = "No answer found!";
+        }
+
         CloseConnection();
+        return res;
     }
 
-    public void EvaluateHssBoxRect(Line mainColumn)
+    public ProfileCalcResult EvaluateHssBoxRect(Line mainColumn)
     {
         var lambdaR = 1.4f * Mathf.Sqrt(E / mainColumn.Fy);
-
+        bool findAns = false;
         OpenConnection();
         RequestHssRectData();
+        var res = new ProfileCalcResult();
 
         BoxHssRectangularDataStructure data;
         while (NextRow(out data))
@@ -570,20 +691,46 @@ public class CoreCalculator : MonoBehaviour
                     1.2f * mainColumn.DeadForces + 1.6f * mainColumn.AliveForces)
                 : mainColumn.UltimateForce;
 
+            res = new ProfileCalcResult
+            {
+                Kx = kx,
+                Ky = ky,
+                LambdaX = lambdaX,
+                LambdaY = lambdaY,
+                Lambda = lambda,
+                Fe = Fe,
+                Fcr = fcr,
+                Ag = Ag,
+                Pn = Pn,
+                Fu = fu
+            };
+
             if (fu <= Pn * Phy)
             {
                 var dpc = fu / (Phy * Pn);
-                MainManager.Instance.MainWindow.ShowOutput("Use: Box HSS Rect " + data.BoxHss + " t = " + data.T + "cm" + "\nD / C: " + dpc);
+                res.Answer = "Use: Box HSS Rect " + data.BoxHss + " t = " + data.T + "cm" + "\nD / C: " + dpc;
+                res.Dpc = dpc;
+                findAns = res.IsAnswered = true;
                 break;
             }
         }
 
+
+        if (!findAns)
+        {
+            res.Answer = "No answer found!";
+        }
+
         CloseConnection();
+        return res;
     }
 
-    public void EvaluateSquareHss(Line mainColumn)
+    public ProfileCalcResult EvaluateSquareHss(Line mainColumn)
     {
         var lambdaR = 1.4f * Mathf.Sqrt(E / mainColumn.Fy);
+
+        bool findAns = false;
+        var res = new ProfileCalcResult();
 
         OpenConnection();
         RequestHssSquareData();
@@ -625,21 +772,46 @@ public class CoreCalculator : MonoBehaviour
                     1.2f * mainColumn.DeadForces + 1.6f * mainColumn.AliveForces)
                 : mainColumn.UltimateForce;
 
+            res = new ProfileCalcResult()
+            {
+                Kx = kx,
+                Ky = ky,
+                LambdaX = lambdaX,
+                LambdaY = lambdaY,
+                Lambda = lambda,
+                Fe = Fe,
+                Fcr = fcr,
+                Ag = Ag,
+                Pn = Pn,
+                Fu = fu
+            };
+
             if (fu <= Pn * Phy)
             {
                 var dpc = fu / (Phy * Pn);
-                MainManager.Instance.MainWindow.ShowOutput("Use: Box HSS Square " + data.BoxHss + " t = " + data.T + " cm\nD/C: " + dpc);
+                res.Answer = "Use: Box HSS Square " + data.BoxHss + " t = " + data.T + " cm\nD/C: " + dpc;
+                res.Dpc = dpc;
+                findAns = res.IsAnswered = true;
                 break;
             }
         }
 
+        if (!findAns)
+        {
+            res.Answer = "No answer found!";
+        }
+
         CloseConnection();
+        return res;
     }
 
-    public void EvaluateRoundHss(Line mainColumn)
+    public ProfileCalcResult EvaluateRoundHss(Line mainColumn)
     {
         OpenConnection();
         RequestRoundHssData();
+
+        var res = new ProfileCalcResult();
+        bool findAns = false;
 
         RoundHssDataStructure data;
         while (NextRow(out data))
@@ -676,21 +848,46 @@ public class CoreCalculator : MonoBehaviour
                     1.2f * mainColumn.DeadForces + 1.6f * mainColumn.AliveForces)
                 : mainColumn.UltimateForce;
 
+            res = new ProfileCalcResult()
+            {
+                Kx = kx,
+                Ky = ky,
+                LambdaX = lambdaX,
+                LambdaY = lambdaY,
+                Lambda = lambda,
+                Fe = Fe,
+                Fcr = fcr,
+                Ag = Ag,
+                Pn = Pn,
+                Fu = fu
+            };
+
             if (fu <= Pn * Phy)
             {
                 var dpc = fu / (Phy * Pn);
-                MainManager.Instance.MainWindow.ShowOutput("Use: Round HSS " + data.RoundHss + " D = " + data.D + " cm, t = " + data.T + "\nD/C: " + dpc);
+                res.Answer = "Use: Round HSS " + data.RoundHss + " D = " + data.D + " cm, t = " + data.T + "\nD/C: " + dpc;
+                res.Dpc = dpc;
+                findAns = res.IsAnswered = true;
                 break;
             }
         }
 
+        if (!findAns)
+        {
+            res.Answer = "No answer found!";
+        }
+
         CloseConnection();
+        return res;
     }
 
-    public void EvaluateReinforcedIpb(Line mainColumn)
+    public ProfileCalcResult EvaluateReinforcedIpb(Line mainColumn)
     {
         OpenConnection();
         RequestIpbData();
+
+        bool findAns = false;
+        var res = new ProfileCalcResult();
 
         IPBDataStructure data;
         while (NextRow(out data))
@@ -747,22 +944,52 @@ public class CoreCalculator : MonoBehaviour
 
             var Pn = Fcr * Ag;
 
+            res = new ProfileCalcResult()
+            {
+                LambdaX = lambdaX,
+                LambdaY = lambdaY,
+                Lambda = lambda,
+                Tp = tp,
+                Ag = Ag,
+                Ix = Ix,
+                Iy = Iy,
+                Rx = Rx,
+                Ry = Ry,
+                Cw = Cw,
+                J = J,
+                FeD = feD,
+                FeG = feG,
+                Fe = Fe,
+                Fcr = Fcr,
+                Fu = fu
+            };
+
             if (fu <= Pn * Phy)
             {
                 var dpc = fu / (Phy * Pn);
-                MainManager.Instance.MainWindow.ShowOutput("Use: " + "IPB" + data.IPB + " + 2 PL " + data.Bf + " * "+ tp +
-                                                           " cm \nD/C: " + dpc);
+                res.Answer = "Use: " + "IPB" + data.IPB + " + 2 PL " + data.Bf + " * " + tp + " cm \nD/C: " + dpc;
+                res.Dpc = dpc;
+                res.IsAnswered = findAns = true;
                 break;
             }
         }
 
+        if (!findAns)
+        {
+            res.Answer = "No answer found!";
+        }
+
         CloseConnection();
+        return res;
     }
 
-    public void EvaluateReinforcedIpe(Line mainColumn)
+    public ProfileCalcResult EvaluateReinforcedIpe(Line mainColumn)
     {
         OpenConnection();
         RequestIpeData();
+
+        var res = new ProfileCalcResult();
+        bool findAns = false;
 
         IPEDataStructure data;
         while (NextRow(out data))
@@ -819,22 +1046,54 @@ public class CoreCalculator : MonoBehaviour
 
             var Pn = Fcr * Ag;
 
+            res = new ProfileCalcResult()
+            {
+                Tp = tp,
+                Ag = Ag,
+                Ix = Ix,
+                Iy = Iy,
+                Rx = Rx,
+                Ry = Ry,
+                Kx = Kx,
+                Ky = Ky,
+                Cw = Cw,
+                J = J,
+                Lambda = lambda,
+                LambdaX = lambdaX,
+                LambdaY = lambdaY,
+                FeD = feD,
+                FeG = feG,
+                Fe = Fe,
+                Fcr = Fcr,
+                Fu = fu
+            };
+
             if (fu <= Pn * Phy)
             {
                 var dpc = fu / (Phy * Pn);
-                MainManager.Instance.MainWindow.ShowOutput("Use: " + "IPE " + data.IPE + " + 2 PL " + data.Bf + " * " + tp +
-                                                           " cm \nD/C: " + dpc);
+                res.Answer = "Use: " + "IPE " + data.IPE + " + 2 PL " + data.Bf + " * " + tp + " cm \nD/C: " + dpc;
+                res.Dpc = dpc;
+                res.IsAnswered = findAns = true;
                 break;
             }
         }
 
+        if (!findAns)
+        {
+            res.Answer = "No answer found!";
+        }
+
         CloseConnection();
+        return res;
     }
 
-    public void EvaluateDoubleIpeParallel(Line mainColumn)
+    public ProfileCalcResult EvaluateDoubleIpeParallel(Line mainColumn)
     {
         OpenConnection();
         RequestIpeData();
+
+        bool findAns = false;
+        var res = new ProfileCalcResult();
 
         IPEDataStructure data;
         while (NextRow(out data))
@@ -855,7 +1114,7 @@ public class CoreCalculator : MonoBehaviour
             var lambdaX = Mathf.Max(Kx, Ky) * mainColumn.Length / Mathf.Max(Rx, Ry);
             var lambdaY = Mathf.Min(Kx, Ky) * mainColumn.Length / Mathf.Min(Rx, Ry);
 
-            var a = Mathf.Round((3.0f / 4.0f) * Mathf.Max(lambdaX, lambdaY) * rMin); 
+            var a = Mathf.Round((3.0f / 4.0f) * Mathf.Max(lambdaX, lambdaY) * rMin);
 
             var lambdaM1 = Mathf.Sqrt(Mathf.Pow(lambdaY, 2) + Mathf.Pow(a / rMin, 2));
             var lambdaM2 = a / rMin <= 40
@@ -880,7 +1139,7 @@ public class CoreCalculator : MonoBehaviour
             if (a / rMin > 3.0f / 4.0f * mLambda)
                 continue;
 
-            
+
 
 
 
@@ -895,18 +1154,49 @@ public class CoreCalculator : MonoBehaviour
 
             var ts = tps.First(f => f >= maxTs);
 
+            res = new ProfileCalcResult()
+            {
+                Ag = Ag,
+                Ix = Ix,
+                Iy = Iy,
+                Rx = Rx,
+                Ry = Ry,
+                Kx = Kx,
+                Ky = Ky,
+                Cw = Cw,
+                J = J,
+                LambdaX = lambdaX,
+                LambdaY = lambdaY,
+                LambdaM = mLambda,
+                R = rMin,
+                A = a,
+                Vux = Vux,
+                Fcr = fcr1,
+                Vb = Vb,
+                Mb = Mb,
+                Bs = bs,
+                Ts = ts,
+                Fu = fu
+            };
+
             if (fu <= Pn * Phy)
             {
-                var dpc = fu / (Phy * Pn);
-                MainManager.Instance.MainWindow.ShowOutput("Use: 2 IPE " + data.IPE + " @ " + Mathf.Round(data.A)
-                                                           + " + 2 PL " + Mathf.Round(data.A) + " * " + bs + " * " + ts + " cm @" + "\na = " + a + " cm"+ "\n\n"
-                                                           + "D / C: " + dpc);
+                var dpc = res.Dpc = fu / (Phy * Pn);
+                res.Answer = "Use: 2 IPE " + data.IPE + " @ " + Mathf.Round(data.A) + " + 2 PL " + Mathf.Round(data.A) +
+                             " * " + bs + " * " + ts + " cm @" + "\na = " + a + " cm" + "\n\n" + "D / C: " + dpc;
+                findAns = res.IsAnswered = true;
                 break;
             }
 
         }
 
+        if (!findAns)
+        {
+            res.Answer = "No answer found!";
+        }
+
         CloseConnection();
+        return res;
     }
 
 
