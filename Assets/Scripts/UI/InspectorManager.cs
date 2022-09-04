@@ -249,73 +249,75 @@ public class InspectorManager : MonoBehaviour
         StartCoroutine(RunCalculation());
     }
 
-    public IEnumerator RunCalculation()
+    private IEnumerator RunCalculation()
     {
         yield return new WaitForEndOfFrame();
         StartCalculating();
         yield return new WaitForEndOfFrame();
+
         Apply();
-        ProfileCalcResult res = new ProfileCalcResult();
+        ProfileCalcResult res = null;
 
         switch ((RunOption)_outputOptions.value)
         {
             case RunOption.IPB:
                 {
-                    res = MainManager.Instance.CoreCalculator.EvaluateIpb(_selectedLine);
+                    yield return res = MainManager.Instance.CoreCalculator.EvaluateIpb(_selectedLine);
                     break;
                 }
             case RunOption.ReinforcedIPB:
                 {
-                    res = MainManager.Instance.CoreCalculator.EvaluateReinforcedIpb(_selectedLine);
+                    yield return res = MainManager.Instance.CoreCalculator.EvaluateReinforcedIpb(_selectedLine);
                     break;
                 }
             case RunOption.ReinforcedIPE:
                 {
-                    res = MainManager.Instance.CoreCalculator.EvaluateReinforcedIpe(_selectedLine);
+                    yield return res = MainManager.Instance.CoreCalculator.EvaluateReinforcedIpe(_selectedLine);
                     break;
                 }
             case RunOption.DoubleIPEComplete:
                 {
-                    res = MainManager.Instance.CoreCalculator.EvaluateDoubleIpeComplete(_selectedLine);
+                    yield return res = MainManager.Instance.CoreCalculator.EvaluateDoubleIpeComplete(_selectedLine);
                     break;
                 }
             case RunOption.DoubleIPEDiagonal:
                 {
-                    res = MainManager.Instance.CoreCalculator.EvaluateDoubleIpeDiagonal(_selectedLine);
+                    yield return res = MainManager.Instance.CoreCalculator.EvaluateDoubleIpeDiagonal(_selectedLine);
                     break;
                 }
             case RunOption.DoubleIPECross:
                 {
-                    res = MainManager.Instance.CoreCalculator.EvaluateDoubleIpeCross(_selectedLine);
+                    yield return res = MainManager.Instance.CoreCalculator.EvaluateDoubleIpeCross(_selectedLine);
                     break;
                 }
             case RunOption.BoxHSSRectangular:
                 {
-                    res = MainManager.Instance.CoreCalculator.EvaluateHssBoxRect(_selectedLine);
+                    yield return res = MainManager.Instance.CoreCalculator.EvaluateHssBoxRect(_selectedLine);
                     break;
                 }
             case RunOption.BoxHSSSquare:
                 {
-                    res = MainManager.Instance.CoreCalculator.EvaluateSquareHss(_selectedLine);
+                    yield return res = MainManager.Instance.CoreCalculator.EvaluateSquareHss(_selectedLine);
                     break;
                 }
             case RunOption.RoundHSS:
                 {
-                    res = MainManager.Instance.CoreCalculator.EvaluateRoundHss(_selectedLine);
+                    yield return res = MainManager.Instance.CoreCalculator.EvaluateRoundHss(_selectedLine);
                     break;
 
                 }
             case RunOption.EvaluateDoubleIpeParallel:
                 {
-                    res = MainManager.Instance.CoreCalculator.EvaluateDoubleIpeParallel(_selectedLine);
+                    yield return res = MainManager.Instance.CoreCalculator.EvaluateDoubleIpeParallel(_selectedLine);
                     break;
                 }
         }
-        yield return new WaitForSeconds(1.5f);
+
+        yield return new WaitForSeconds(1);
         yield return new WaitForEndOfFrame();
         StopCalculating();
-        MainManager.Instance.MainWindow.ShowOutput(res);
 
+        MainManager.Instance.MainWindow.ShowOutput(res);
     }
 
 
@@ -329,7 +331,7 @@ public class InspectorManager : MonoBehaviour
         LoadingModal.SetActive(false);
     }
 
-    public void ForceADChanged(bool on)
+    public void ForceAdChanged(bool on)
     {
         _aliveForceInp.interactable = on;
         _deadForceInp.interactable = on;

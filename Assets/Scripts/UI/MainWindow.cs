@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MainWindow : MonoBehaviour
 {
@@ -20,6 +21,18 @@ public class MainWindow : MonoBehaviour
 
     [SerializeField]
     private GameObject _outputWindow;
+
+    [SerializeField]
+    private GameObject _detailsWindow;
+
+    [SerializeField]
+    private TextMeshProUGUI _detailsText;
+
+    [SerializeField]
+    private TextMeshProUGUI _detailsTitle;
+
+    [SerializeField]
+    private Button _detailsBtn;
 
     [SerializeField]
     private TextMeshProUGUI _outputText;
@@ -54,6 +67,25 @@ public class MainWindow : MonoBehaviour
         _errorMessage.text = message;
     }
 
+    private void ShowDetails(CalcResult res)
+    {
+        string details = "";
+        var properties = res.GetType().GetProperties();
+        for (int i = 0; i < properties.Length; i++)
+        {
+            var p = properties[i];
+            var val = p.GetValue(res);
+            if (val == null || p.Name == "Answer" || p.Name == "IsAnswered" || p.Name == "Name")
+                continue;
+
+            details += $"{p.Name}:\t\t{val}" + (i % 2 == 0 ? "\n" : ",\t\t");
+        }
+
+        _detailsTitle.text = res.Name;
+        _detailsText.text = details;
+        _detailsWindow.SetActive(true);
+    }
+
     public void DismissError()
     {
         _errorWindow.SetActive(false);
@@ -64,6 +96,7 @@ public class MainWindow : MonoBehaviour
         _outputWindow.SetActive(true);
         _outputText.text = res.Answer;
         
+        _detailsBtn.onClick.AddListener(() => ShowDetails(res));
     }
 
     public void CloseOutput()
@@ -71,9 +104,16 @@ public class MainWindow : MonoBehaviour
         _outputWindow.gameObject.SetActive(false);
     }
 
+    public void CloseDetails()
+    {
+        _detailsBtn.onClick.RemoveAllListeners();
+        _detailsWindow.gameObject.SetActive(false);
+    }
+
     public void StatusMessage(string message, MessageType type)
     {
         _statusText.text = message;
+
         switch (type)
         {
             case MessageType.Info:

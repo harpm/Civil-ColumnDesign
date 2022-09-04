@@ -231,7 +231,7 @@ public class CoreCalculator : MonoBehaviour
         OpenConnection();
         RequestIpbData();
         bool findAns = false;
-        ProfileCalcResult res = new ProfileCalcResult();
+        ProfileCalcResult res = default;
 
         IPBDataStructure data;
         while (NextRow(out data))
@@ -254,7 +254,7 @@ public class CoreCalculator : MonoBehaviour
             var Fcr = CoreCalculator.Fcr(lambda, data.Ix, data.Iy, data.Cw, mainColumn.Length, data.J, mainColumn.Fy);
             var Pn = Fcr * data.Ag;
 
-            res = new ProfileCalcResult()
+            res = new ProfileCalcResult("IPB")
             {
                 Kx = Kx,
                 Ky = Ky,
@@ -293,7 +293,7 @@ public class CoreCalculator : MonoBehaviour
     {
         OpenConnection();
         RequestIpeData();
-        ProfileCalcResult res = new ProfileCalcResult();
+        ProfileCalcResult res = default;
         IPEDataStructure data;
         bool findAns = false;
 
@@ -355,7 +355,7 @@ public class CoreCalculator : MonoBehaviour
 
             var Pn = Fcr * Ag;
 
-            res = new ProfileCalcResult()
+            res = new ProfileCalcResult("All over Double IPE")
             {
                 Kx = Kx,
                 Ky = Ky,
@@ -404,7 +404,7 @@ public class CoreCalculator : MonoBehaviour
         bool findAns = false;
         OpenConnection();
         RequestIpeData();
-        ProfileCalcResult res = new ProfileCalcResult();
+        ProfileCalcResult res = default;
 
         IPEDataStructure data;
         while (NextRow(out data))
@@ -475,7 +475,7 @@ public class CoreCalculator : MonoBehaviour
 
             var bs = ChooseTb(Pb / (0.9f * fcr * tb));
 
-            res = new ProfileCalcResult()
+            res = new ProfileCalcResult("Diagonal Double IPE")
             {
                 Ag = Ag,
                 Ix = Ix,
@@ -526,7 +526,7 @@ public class CoreCalculator : MonoBehaviour
         OpenConnection();
         RequestIpeData();
 
-        ProfileCalcResult res = new ProfileCalcResult();
+        ProfileCalcResult res = default;
 
         IPEDataStructure data;
         while (NextRow(out data))
@@ -598,7 +598,7 @@ public class CoreCalculator : MonoBehaviour
 
             var bs = ChooseTb(Pb / (0.9f * fcr * tb));
 
-            res = new ProfileCalcResult
+            res = new ProfileCalcResult("Cross Double IPE")
             {
                 Ag = Ag,
                 Ix = Ix,
@@ -652,7 +652,7 @@ public class CoreCalculator : MonoBehaviour
         bool findAns = false;
         OpenConnection();
         RequestHssRectData();
-        var res = new ProfileCalcResult();
+        ProfileCalcResult res = default;
 
         BoxHssRectangularDataStructure data;
         while (NextRow(out data))
@@ -691,7 +691,7 @@ public class CoreCalculator : MonoBehaviour
                     1.2f * mainColumn.DeadForces + 1.6f * mainColumn.AliveForces)
                 : mainColumn.UltimateForce;
 
-            res = new ProfileCalcResult
+            res = new ProfileCalcResult("Rectangle box Hss")
             {
                 Kx = kx,
                 Ky = ky,
@@ -730,7 +730,7 @@ public class CoreCalculator : MonoBehaviour
         var lambdaR = 1.4f * Mathf.Sqrt(E / mainColumn.Fy);
 
         bool findAns = false;
-        var res = new ProfileCalcResult();
+        ProfileCalcResult res = default;
 
         OpenConnection();
         RequestHssSquareData();
@@ -772,7 +772,7 @@ public class CoreCalculator : MonoBehaviour
                     1.2f * mainColumn.DeadForces + 1.6f * mainColumn.AliveForces)
                 : mainColumn.UltimateForce;
 
-            res = new ProfileCalcResult()
+            res = new ProfileCalcResult("Squer HSS")
             {
                 Kx = kx,
                 Ky = ky,
@@ -810,7 +810,7 @@ public class CoreCalculator : MonoBehaviour
         OpenConnection();
         RequestRoundHssData();
 
-        var res = new ProfileCalcResult();
+        ProfileCalcResult res = default;
         bool findAns = false;
 
         RoundHssDataStructure data;
@@ -848,7 +848,7 @@ public class CoreCalculator : MonoBehaviour
                     1.2f * mainColumn.DeadForces + 1.6f * mainColumn.AliveForces)
                 : mainColumn.UltimateForce;
 
-            res = new ProfileCalcResult()
+            res = new ProfileCalcResult("Round Hss")
             {
                 Kx = kx,
                 Ky = ky,
@@ -887,7 +887,7 @@ public class CoreCalculator : MonoBehaviour
         RequestIpbData();
 
         bool findAns = false;
-        var res = new ProfileCalcResult();
+        ProfileCalcResult res = default;
 
         IPBDataStructure data;
         while (NextRow(out data))
@@ -944,7 +944,7 @@ public class CoreCalculator : MonoBehaviour
 
             var Pn = Fcr * Ag;
 
-            res = new ProfileCalcResult()
+            res = new ProfileCalcResult("Reinforced IPB")
             {
                 LambdaX = lambdaX,
                 LambdaY = lambdaY,
@@ -988,7 +988,7 @@ public class CoreCalculator : MonoBehaviour
         OpenConnection();
         RequestIpeData();
 
-        var res = new ProfileCalcResult();
+        ProfileCalcResult res = default;
         bool findAns = false;
 
         IPEDataStructure data;
@@ -1046,7 +1046,7 @@ public class CoreCalculator : MonoBehaviour
 
             var Pn = Fcr * Ag;
 
-            res = new ProfileCalcResult()
+            res = new ProfileCalcResult("Reinforced IPE")
             {
                 Tp = tp,
                 Ag = Ag,
@@ -1093,7 +1093,7 @@ public class CoreCalculator : MonoBehaviour
         RequestIpeData();
 
         bool findAns = false;
-        var res = new ProfileCalcResult();
+        ProfileCalcResult res = default;
 
         IPEDataStructure data;
         while (NextRow(out data))
@@ -1154,7 +1154,7 @@ public class CoreCalculator : MonoBehaviour
 
             var ts = tps.First(f => f >= maxTs);
 
-            res = new ProfileCalcResult()
+            res = new ProfileCalcResult("Double parallel IPE")
             {
                 Ag = Ag,
                 Ix = Ix,
